@@ -32,7 +32,7 @@ search.location = function(location,
                   "_format" = "for_search_results",
                   "_limit" = 50,
                   "_offset" = 0)
-    
+
     # make an exploratory call, only return 1 listing
     endpoint_url = "https://api.airbnb.com/v2/search_results"
     request = RETRY("GET", url = construct.GET(endpoint_url, params))
@@ -43,7 +43,7 @@ search.location = function(location,
         stop(paste0("Airbnb's API returned an error.\n\n",
                     paste(names(parsed_results), parsed_results,
                           sep = ": ", collapse = "\n")))
-    
+
     # if it was, check how many listings are returned for the location
     num_listings = parsed_results$metadata$listings_count
     # if 0 listings, stop
@@ -58,7 +58,7 @@ search.location = function(location,
     max_chunk_size = 50
     required_iterations = ceiling(num_listings/max_chunk_size)
     params$`_limit` = max_chunk_size
-    
+
     # make the necessary calls, saving results only (not metadata) at each step
     all_results = list()
     for (i in 1:required_iterations) {
@@ -158,10 +158,26 @@ describe = function(metadata, results) {
     ggsave(file = paste0(metadata$passed_location, ".pdf"), p, width = 16, height = 9)
 }
 
-location = "60615"
+location = "13035"
 content = search.location(location)
 metadata = parse.metadata(content)
+
+rename_vars = c("listing.name" = "listing_name", "listing.id" = "id", "listing.bedrooms" = "bedrooms",
+                "listing.beds" = "beds", "listing.bathrooms" = "bathrooms", "listing.person_capacity" = "capacity",
+                "listing.city" = "city", "listing.public_address" = "public_address",
+                "listing.lat" = "lat", "listing.lng" = "lng", "listing.property_type" = "property_type",
+                "listing.room_type" = "room_type", "listing.star_rating" = "rating",
+                "listing.primary_host.first_name" = "host_name", "listing.primary_host.id" = "host_id",
+                "listing.instant_bookable" = "instant_book",
+                "listing.is_business_travel_ready" = "business_travel_ready", "listing.picture_count" = "num_pictures",
+                "listing.reviews_count" = "num_reviews", "pricing_quote.guests" = "price_quote_num_guests",
+                "pricing_quote.localized_currency" = "price_quote_currency", "pricing_quote.localized_nightly_price" = "price_quote_price",
+                "pricing_quote.localized_service_fee" = "price_quote_fee")
+# want to put this in but not defined for all places..."listing.neighborhood" = "neighborhood"
+
 result = parse.results(content) %>%
-          select(-starts_with("listing.xl_picture_urls"),
-                 -starts_with("listing.picture_urls"))
+         setNames(., rename_vars[names(.)]) %>%
+         .[rename_vars] %>%
+         left_join(getListingDetails(result$listing_id), by = "id")
+
 describe(metadata, results)
