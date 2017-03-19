@@ -1,6 +1,18 @@
 ---
-title: "Rbnb"
-author: "Alexander Kroeger and Noah Zinsmeister"
+title: "Report"
+author: "Alexander Kroeger, Noah Zinsmeister"
+output:
+    rmarkdown::html_vignette:
+        toc: true
+        toc_float:
+            collapsed: false
+        number_sections: true
+        df_print: tibble
+vignette: >
+  %\VignetteIndexEntry{Report}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
 output:
     md_document:
         toc: true
@@ -12,7 +24,6 @@ output:
             collapsed: false
         number_sections: true
         df_print: tibble
----
 
 
 # Introduction {.tabset}
