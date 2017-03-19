@@ -171,7 +171,31 @@ parseMetadata = function(metadata) {
 }
 
 parseResults = function(results) {
-    dplyr::bind_rows(lapply(results, function(x) dplyr::bind_rows(as.list(unlist(x)))))
+    results <- dplyr::bind_rows(lapply(results, function(x) dplyr::bind_rows(as.list(unlist(x)))))
+    
+    filterResults <- function(i) {
+      if(grepl(pattern="image",x=i) |
+         grepl(pattern="url",x=i) |
+         grepl(pattern="photo",x=i) |
+         grepl(pattern="png",x=i) | 
+         grepl(pattern="scrim",x=i)
+      ){
+        results[i] <<- NULL
+      }
+    }
+    lapply(names(results),filterResults)
+    
+    #remove listing prefix
+    remPref <- function(name,pref){
+      gsub(paste("^",pref,sep=""),"",name)
+    }
+    names(results) <- lapply(names(results),remPref,pref="listing.")
+    
+    # replace underscores with periods
+    names(results) <- lapply(names(results),gsub,pattern="_",replacement=".") %>%
+                        unlist()
+    
+    results
 }
 
 

@@ -3,7 +3,12 @@ library(dplyr)
 
 # from dplyr filter select rename bind_rows left_join
 # from xgboost xgb.DMatrix xgb.train predict
-
+listingID <- "15518457"
+maxSample=100
+nfold=10
+nrounds=1000
+early.stop.round=50
+max_depth=6
 
 predictPrice <- function(listingID,
                          maxSample=500,
@@ -16,11 +21,11 @@ predictPrice <- function(listingID,
   listing.detail <- getListingDetail(listingID=listingID)
   
   # Get similar geographical listings based on zipcode
+  cat("Pulling Data for Similar Listings.\n")
   trainData <- searchLocation(location=listing.detail$zipcode) %>%
-      {.$results$data}
+    {.$results$data}
+  cat("Done!\n")
   
-  trainData <- dplyr::rename(trainData,id=listing.id)
-
   # Take a random sample if the number of listings is above the cutoff
   if(nrow(trainData)>maxSample){
     sample <- sample(1:nrow(trainData),maxSample)
@@ -28,15 +33,20 @@ predictPrice <- function(listingID,
   }
   
   # Merge in details of the listings -- this is unfortunately slow
-  trainData <-listingDetailsForMerge(trainData$id) %>%
-                  {left_join(trainData,.,by="id")}
+  cat("Merging in the details for similar listings.\n")
+  cat("This may take a while.\n")
+  cat("Try reducing maxSample if it takes too long.\n")
+  trainData <-listingDetailsFromList(trainData$id) %>%
+                  {mergeDetails(trainData,.)}
+  cat("Done merging details!\n")
+  
                     
   # Ensure that the listing of interest is in the dataset
   # If not, add it in for further processing
   if(!(listing.detail$id %in% trainData$id)){
     trainData <- dplyr::bind_rows(trainData,listing.detail)
   }
-
+  
   # Keep variables on which to train XGBoost
   trainData <- dplyr::select(trainData,
                              id,
@@ -58,7 +68,9 @@ predictPrice <- function(listingID,
                              min.nights,
                              person.capacity,
                              cleaning.fee.native,
-                             star.rating
+                             star.rating,
+                             bed.type,
+                             property.type
                           )
   
   # If an amentity is missing, assume that it doesn't have that amenity
@@ -94,13 +106,14 @@ predictPrice <- function(listingID,
   dx <- xgboost::xgb.DMatrix(data.matrix(trainData),label=y,missing=NaN)
   
   ## Train the model
-  xgb.model <- xgboost::xgb.cv(data=dx,
+  cat("Starting Prediction.\n")
+  capture.output(xgb.model <- xgboost::xgb.cv(data=dx,
                                objective='reg:linear',
                                nfold=nfold,
                                early.stop.round = early.stop.round,
                                nrounds=nrounds,
                                max_depth=max_depth,
-                               maximize=FALSE)
+                               maximize=FALSE))
 
   # Take the best model (lowest CV error)
   best.n <- min(which(xgb.model$test.rmse.mean==min(xgb.model$test.rmse.mean)))
@@ -108,9 +121,14 @@ predictPrice <- function(listingID,
   # Train the optimal model
   opt.model <- xgboost::xgb.train(data=dx,
                                   nrounds=best.n)
-  dtest <- xgboost::xgb.DMatrix(as.matrix(testData))
+  dtest <- xgboost::xgb.DMatrix(as.matrix(testData),missing=NaN)
   
   # predict for test set
   price.hat <- xgboost::predict(opt.model,dtest)
+  
+  cat(paste("The predicted price based on similar listings is ",format(price.hat,digits=2),"\n",sep=""))
+  pDif <- (price.hat-testData[["price"]])/testData[["price"]]
+  cat(paste("This represents a ",format(100*abs(pDif),digits=2),"%",ifelse(pDif>0," premium"," discount")," to the current listing price.\n",sep=""))
+  
   price.hat
 }

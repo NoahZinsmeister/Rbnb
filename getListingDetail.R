@@ -5,28 +5,47 @@ library(magrittr)
 library(tibble)
 # from httr RETRY content
 
-listingDetailsForMerge <- function(listingIDs,
+listingDetailsFromList <- function(listingIDs,
                               client_id = "d306zoyjsyarp7ifhu67rjxn52tv0t20") {
   results <- bind_rows(lapply(unique(listingIDs),
                      function(x) getListingDetail(x, client_id = client_id)))
-  FilterVars <- function(i) {
-      if( 
-         ## Redundant variables also in listing search
-           i=="room.type" |
-           i=="lat" | 
-           i=="lng" |
-           i=="property.type" |
-           i=="bedrooms" | 
-           i=="bathrooms" |
-           i=="beds" | 
-           i=="city"
-      ){
-        results[i] <<- NULL
-      }
-  }
   lapply(names(results),FilterVars)
   
   results
+}
+
+mergeDetails <- function(searchResults,details){
+  # Filter out overlapping variables form the search results
+  FilterVars <- function(i) {
+    if( 
+      ## Redundant variables also in listing search
+      i=="room.type" |
+      i=="lat" | 
+      i=="lng" |
+      i=="property.type" |
+      i=="bedrooms" | 
+      i=="bathrooms" |
+      i=="beds" | 
+      i=="city" | 
+      i=="instant.bookable" | 
+      i=="is.business.travel.ready" | 
+      i=="localized.city" | 
+      i=="person.capacity" |
+      i=="primary.host.has.profile.pic" | 
+      i=="primary.host.id" | 
+      i=="primary.host.is.superhost" | 
+      i=="property.type.id" | 
+      i=="public.address" | 
+      i=="reviews.count" | 
+      i=="room.type.category" | 
+      i=="star.rating" | 
+      i=="user.id"
+    ){
+      searchResults[i] <<- NULL
+    }
+  }
+  lapply(names(searchResults),FilterVars)
+  left_join(searchResults,details,by="id")
 }
 
 
