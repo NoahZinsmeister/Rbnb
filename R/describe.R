@@ -1,13 +1,29 @@
-library(httr)
-library(plyr)
-library(dplyr)
-library(magrittr)
-library(ggplot2)
-library(grid)
-library(gridExtra)
-library(tibble)
-library(ggmap)
+#' Describe characteristics of Airbnb listings.
+#' 
+#' @description Given output from \code{\link{searchLocation}}, produces
+#' summary charts based on metadata and results.
+#' @rdname describe
+#'
+#' @param content The output of \code{\link{searchLocation}}.
+#' @export
+#'
+#' @importFrom ggplot2 ggplot, aes, geom_bar, geom_text, geom_histogram,
+#' geom_point, labs, scale_x_continuous, scale_x_discrete, scale_color_gradient
+#' @importFrom ggmap ggmap
+#' @importFrom scales percent
+#' @importFrom gridExtra grid.arrange
+#' @importFrom grid textGrob, gpar
+#' @importFrom 
+#' @importFrom dplyr bind_rows, mutate, select, arrange, rename, lead,
+#' mutate_at
+#'
+NULL
 
+#' @rdname describe
+#' @export
+#' @examples
+#' describeMetadata(content)
+#'
 describeMetadata = function(content) {
     metadata = content$metadata
 
@@ -25,6 +41,11 @@ describeMetadata = function(content) {
     #ggplot2::ggsave(file = paste0(metadata$passed.location, ".pdf"), p, width = 16, height = 9)
 }
 
+#' @rdname describe
+#' @export
+#' @examples
+#' describeResults(content)
+#'
 describeResults = function(content) {
     data = content$results$data
 
@@ -34,6 +55,11 @@ describeResults = function(content) {
     ggplot2::ggplot(data, common.aes) + common.hist + ggplot2::labs(title = "Prices", x = "", y = "Count")
 }
 
+#' @rdname describe
+#' @export
+#' @examples
+#' showMap(content)
+#'
 showMap = function(content) {
     map <- ggmap::get_map(location = c(left = min(content$results$data$lng),
                                        bottom = min(content$results$data$lat),
@@ -45,6 +71,3 @@ showMap = function(content) {
         ggplot2::scale_color_gradient(low = "#99ccff", high = "#000099", guide = "colorbar")
 }
 
-describeMetadata(content)
-describeResults(content)
-showMap(content)
