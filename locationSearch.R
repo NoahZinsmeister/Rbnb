@@ -3,8 +3,6 @@ library(plyr)
 library(dplyr)
 library(magrittr)
 library(ggplot2)
-library(grid)
-library(gridExtra)
 library(tibble)
 
 constructGET = function(base.url, parameters) {
@@ -42,13 +40,13 @@ searchLocation = function(location,
                   price_min = 0,
                   price_max = 2000,
                   sort = 1,
-                  "_format" = "for_search_results_with_minimal_pricing",
+                  "_format" = "for_search_results",
                   "_limit" = 1,
                   "_offset" = 0)
     endpoint.url = "https://api.airbnb.com/v2/search_results"
 
     # make an exploratory call, only return 1 listing
-    request = RETRY("GET", url = constructGET(endpoint.url, params))
+    request = httr::RETRY("GET", url = constructGET(endpoint.url, params))
     checkRequest(request)
     primary.results = content(request, as = "parsed")
 
@@ -70,7 +68,7 @@ searchLocation = function(location,
         # gets number of listings in [p.low, p.high-1]
         params$price_min = p.low
         params$price_max = p.high-1
-        request = RETRY("GET", url = constructGET(endpoint.url, params))
+        request = httr::RETRY("GET", url = constructGET(endpoint.url, params))
         checkRequest(request)
         parsed.results = content(request, as = "parsed")
         # return number of listings returned
@@ -80,8 +78,8 @@ searchLocation = function(location,
     # starting cutoffs [0-2000]
     price.cutoffs = c(0, 2001)
 
-    # make cutoffs more granular until we have bins of <250 listings
-    while (any(num.listings > 250)) {
+    # make cutoffs more granular until we have bins of <300 listings
+    while (any(num.listings > 300)) {
         # between which cutoffs are there most listings?
         max.index = which.max(num.listings)
         # split that range in half to get new cutoff
@@ -98,9 +96,9 @@ searchLocation = function(location,
         num.listings = num.listings[-max.index]
     }
 
-    #if >2500 listings, warn
-    if (sum(num.listings) > 2500) {
-        warning(paste0(sum(num.listings), " listings found. Performance may be impaired."))
+    #if >2000 listings, warn
+    if (sum(num.listings) > 2000) {
+        warning(paste0(sum(num.listings), " listings found. Performance may be impaired."), immediate. = TRUE)
     } else {
         if (verbose) print(paste0(sum(num.listings), " listings found! Retrieving data..."))
     }
@@ -116,7 +114,7 @@ searchLocation = function(location,
 
         # make the necessary calls, saving results only (not metadata) at each step
         repeat {
-            request = RETRY("GET", url = constructGET(endpoint.url, params))
+            request = httr::RETRY("GET", url = constructGET(endpoint.url, params))
             checkRequest(request)
             parsed.results = content(request, as = "parsed")
             all.results = c(all.results, parsed.results$search_results)
@@ -138,7 +136,7 @@ parseMetadata = function(metadata) {
     geography = list(city = metadata$geography$city,
                      state = metadata$geography$state,
                      country = metadata$geography$country,
-                     result.type = metadata$geography$result.type,
+                     result.type = metadata$geography$result_type,
                      precision = metadata$geography$precision,
                      lat = metadata$geography$lat,
                      lng = metadata$geography$lng)
@@ -148,15 +146,13 @@ parseMetadata = function(metadata) {
     facets = list()
     # "at least x" variables
     for (i in c("bedrooms", "bathrooms", "beds")) {
-        facets[[i]] = lapply(metadata$facets[[i]], lapply,
-                             function(x) ifelse(is.null(x), 0, x)) %>%
-                      bind_rows %>%
-                      mutate(value = as.numeric(as.character(value))) %>%
-                      select(value, count) %>%
-                      arrange(value) %>%
-                      rename(cumulative.count = count) %>%
-                      mutate(count = cumulative.count - lead(cumulative.count,
-                                                             default = 0))
+        facets[[i]] = lapply(metadata$facets[[i]], lapply, function(x) ifelse(is.null(x), 0, x)) %>%
+                      dplyr::bind_rows(.) %>%
+                      dplyr::mutate(value = as.numeric(as.character(value))) %>%
+                      dplyr::select(value, count) %>%
+                      dplyr::arrange(value) %>%
+                      dplyr::rename(cumulative.count = count) %>%
+                      dplyr::mutate(count = cumulative.count - dplyr::lead(cumulative.count, default = 0))
     }
     num.listings = facets$bedrooms$cumulative.count[1]
     # factor variables
@@ -164,10 +160,10 @@ parseMetadata = function(metadata) {
                 "languages")) {
         facets[[i]] = lapply(metadata$facets[[i]], lapply,
                              function(x) ifelse(is.null(x), 0, x)) %>%
-            bind_rows %>%
-            mutate(value = as.character(value)) %>%
-            select(value, count) %>%
-            arrange(desc(count))
+            dplyr::bind_rows(.) %>%
+            dplyr::mutate(value = as.character(value)) %>%
+            dplyr::select(value, count) %>%
+            dplyr::arrange(desc(count))
     }
     list(num.listings = num.listings,
          geography = geography,
@@ -175,24 +171,9 @@ parseMetadata = function(metadata) {
 }
 
 parseResults = function(results) {
-    tbl = bind_rows(lapply(results, function(x) bind_rows(as.list(unlist(x)))))
-
-    # to do...
-    rename.vars = c("listing.name" = "listing.name", "listing.id" = "id", "listing.bedrooms" = "bedrooms",
-                    "listing.beds" = "beds", "listing.bathrooms" = "bathrooms", "listing.person.capacity" = "capacity",
-                    "listing.city" = "city", "listing.public.address" = "public.address",
-                    "listing.neighborhood" = "neighborhood", "listing.lat" = "lat", "listing.lng" = "lng",
-                    "listing.property.type" = "property.type",
-                    "listing.room.type" = "room.type", "listing.star.rating" = "rating",
-                    "listing.primary.host.first.name" = "host.name", "listing.primary.host.id" = "host.id",
-                    "listing.instant.bookable" = "instant.book",
-                    "listing.is.business.travel.ready" = "business.travel.ready", "listing.picture.count" = "num.pictures",
-                    "listing.reviews.count" = "num.reviews", "pricing.quote.guests" = "price.quote.num.guests",
-                    "pricing.quote.localized.currency" = "price.quote.currency", "pricing.quote.localized.nightly.price" = "price.quote.price",
-                    "pricing.quote.localized.service.fee" = "price.quote.fee")
-    tbl
+    dplyr::bind_rows(lapply(results, function(x) dplyr::bind_rows(as.list(unlist(x)))))
 }
 
 
-location = "10019"
+location = "13035"
 content = searchLocation(location)
