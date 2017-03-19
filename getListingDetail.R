@@ -4,21 +4,53 @@ library(dplyr)
 library(magrittr)
 library(tibble)
 # from httr RETRY content
+# from dplyr bind_rows select
+
+addDetails <- function(searchData){
+  combined <-listingDetailsFromList(searchData$id) %>%
+      {mergeDetails(searchData,.)}
+}
 
 listingDetailsFromList <- function(listingIDs,
                               client_id = "d306zoyjsyarp7ifhu67rjxn52tv0t20") {
-  results <- bind_rows(lapply(unique(listingIDs),
+  results <- dplyr::bind_rows(lapply(unique(listingIDs),
                      function(x) getListingDetail(x, client_id = client_id)))
-  lapply(names(results),FilterVars)
+  
+  # remove extra user. prefix
+  names(results) <- lapply(names(results),
+                           function(name,pref){gsub(paste("^",pref,sep=""),"",name)},
+                           pref="user.")
+  # remove listing. prefix
+  names(results) <- lapply(names(results),
+                           function(name,pref){gsub(paste("^",pref,sep=""),"",name)},
+                           pref="listing.")
+  # Certain vars are trivial duplicates once the prefix is removed
+  # Take only unique vars
+  results <- results[,unique(names(results))]
+  
+  # Change class of numeric vars
+  numericList <- c("lat","lng","price","price.native","user.reviewee.count","bathrooms",
+                   "bedrooms","beds","hosts.reviewee.count","min.nights","person.capacity",
+                   "primary.host.reviewee.count","reviews.count","cleaning.fee.native",
+                   "max.nights","security.deposit.native","security.price.native",
+                   "price.for.extra.person.native","guests.included","star.rating",
+                   "weekend.price.native","monthly.price.native","weekly.price.native",
+                   "square.feet")
+  
+  # make sure the vars are in the dataset
+  numericList <- numericList[numericList %in% names(results)]
+  
+  results <- dplyr::mutate_at(.tbl=results,.cols=numericList,funs("as.numeric"))
   
   results
 }
+
 
 mergeDetails <- function(searchResults,details){
   # Filter out overlapping variables form the search results
   FilterVars <- function(i) {
     if( 
-      ## Redundant variables also in listing search
+      # Redundant variables also in listing search
       i=="room.type" |
       i=="lat" | 
       i=="lng" |
@@ -96,3 +128,4 @@ getListingDetail <- function(listingID,
 
   listing.details
 }
+

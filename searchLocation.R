@@ -178,7 +178,8 @@ parseResults = function(results) {
          grepl(pattern="url",x=i) |
          grepl(pattern="photo",x=i) |
          grepl(pattern="png",x=i) | 
-         grepl(pattern="scrim",x=i)
+         grepl(pattern="scrim",x=i) |
+         grepl(pattern="listing.user.id",x=i)
       ){
         results[i] <<- NULL
       }
@@ -195,9 +196,24 @@ parseResults = function(results) {
     names(results) <- lapply(names(results),gsub,pattern="_",replacement=".") %>%
                         unlist()
     
+    # change class of certain vars to numeric
+    numericList <- c("bathrooms","beds","bedrooms","lat","lng","picture.count",
+                     "person.capacity","reviews.count","star.rating","pricing.quote.guests",
+                     "pricing.quote.guest.details.number.of.adults","pricing.quote.localized.nightly.price",
+                     "pricing.quote.localized.service.fee","pricing.quote.localized.total.price",
+                     "pricing.quote.long.term.discount.amount.as.guest","pricing.quote.nightly.price",
+                     "pricing.quote.service.fee","pricing.quote.total.price")
+    
+    # make sure the vars are in the dataset
+    numericList <- numericList[numericList %in% names(results)]
+    
+    results <- dplyr::mutate_at(.tbl=results,.cols=numericList,funs("as.numeric"))
+
     results
 }
 
 
-location = "13035"
-content = searchLocation(location)
+# location = "13035"
+# location = "60611"
+# content = searchLocation(location)
+# result <- content$results$data
