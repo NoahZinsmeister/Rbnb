@@ -7,11 +7,6 @@
 #'
 #' @param searchData a dataset of listings outputted from \code{searchLocation}.
 #'
-#' @examples
-#' #content  <- searchLocation("10019")
-#' #searchData <- content$results$data
-#' #listingsWithDetails <- addDetails(searchData)
-#'
 #' @export
 #'
 #' @importFrom httr RETRY content
@@ -43,9 +38,6 @@ addDetails <- function(searchData){
 #' Example listing ID: 17634206
 #' listingDetails(listingIDs="17634206")
 #' 
-#' content  <- searchLocation("10019")
-#' searchData <- content$results$data
-#' listingsDetails <- listingDetails(searchData)
 #' 
 #'
 #' @export

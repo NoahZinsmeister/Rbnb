@@ -24,8 +24,6 @@
 #' @param trainData a dataset consisting of listings with details if you've already pulled it 
 #' using \code{searchLocation()} and \code{addDetails()}.
 #'
-#' @examples
-#' #predictPrice(listingID="17634206")
 #'
 #' @export
 #'
