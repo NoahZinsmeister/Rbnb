@@ -1,11 +1,5 @@
 #' Pull in detailed listing data to merge with location search data.
 #'
-#' @description After using the \code{searchLocation}, you can add greater detail on each listing
-#' using \code{addDetails}. It takes as an input the dataset of listings outputted from
-#' \code{searchLocation} and merges in details based on the listing ID. Note that this process
-#' is very time consuming, and so it may be unwise to pass too large of a listing dataset.
-#'
-#' @param searchData a dataset of listings outputted from \code{searchLocation}.
 #'
 #' @export
 #'
@@ -19,6 +13,18 @@ NULL
 ##
 ## Written by Kroeger
 ##
+
+#' @rdname addDetails
+#'
+#' @description After using the \code{searchLocation}, you can add greater detail on each listing
+#' using \code{addDetails}. It takes as an input the dataset of listings outputted from
+#' \code{searchLocation} and merges in details based on the listing ID. Note that this process
+#' is very time consuming, and so it may be unwise to pass too large of a listing dataset.
+#'
+#' @param searchData a dataset of listings outputted from \code{searchLocation}.
+#'
+#' @export
+#'
 addDetails <- function(searchData){
   combined <-listingDetails(searchData$id) %>%
   {mergeDetails(searchData,.)}
@@ -124,7 +130,6 @@ mergeDetails <- function(searchResults,details){
 #'
 #' @param listingID a character vector of length one consisting of an Airbnb listing ID.
 #' These can be found on the URLs of Airbnb listings or on the output of \code{searchLocation}.
-#' @param client.id best left alone. This is a key that authorizes requests to the Airbnb API.
 #'
 #' @importFrom magrittr %>%
 getListingDetail <- function(listingID,
