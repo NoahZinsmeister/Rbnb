@@ -1,21 +1,47 @@
-library(httr)
-library(plyr)
-library(dplyr)
-library(magrittr)
-library(tibble)
-# from httr RETRY content
-# from dplyr bind_rows select
+#' Pull in detailed listing data to merge with location search data.
+#'
+#' @description After using the \code{searchLocation}, you can add greater detail on each listing
+#' using \code{addDetails}. It takes as an input the dataset of listings outputted from 
+#' \code{searchLocation} and merges in details based on the listing ID. Note that this process 
+#' is very time consuming, and so it may be unwise to pass too large of a listing dataset.
+#'
+#' @param searchData a dataset of listings outputted from \code{searchLocation}.
+#'
+#' @examples 
+#' content  <- searchLocation("10019")
+#' searchData <- content$results$data
+#' listingsWithDetails <- addDetails(searchData)
+#'
+#' @export
+#'
+#' @importFrom httr RETRY content
+#' @importFrom dplyr bind_rows mutate_at left_join
+#' @importFrom magrittr %>%
+#'
+#' @keywords dplot
 
+## 
+## Written by Kroeger
+##
 addDetails <- function(searchData){
-  combined <-listingDetailsFromList(searchData$id) %>%
-      {mergeDetails(searchData,.)}
+  combined <-listingDetails(searchData$id) %>%
+  {mergeDetails(searchData,.)}
 }
 
-listingDetailsFromList <- function(listingIDs,
-                              client_id = "d306zoyjsyarp7ifhu67rjxn52tv0t20") {
+#' @rdname addDetails
+#' @section listingDetails
+#'  
+#' @description The following is a function that will take in a character vector of 
+#' listing IDs and return a dataset. This function does not necessarily need to be used
+#' with \code{locationSearch}.
+#' 
+#' @export
+#' 
+listingDetails <- function(listingIDs,
+                           client_id = "d306zoyjsyarp7ifhu67rjxn52tv0t20") {
   results <- dplyr::bind_rows(lapply(unique(listingIDs),
-                     function(x) getListingDetail(x, client_id = client_id)))
-
+                                     function(x) getListingDetail(x, client_id = client_id)))
+  
   # remove extra user. prefix
   names(results) <- lapply(names(results),
                            function(name,pref){gsub(paste("^",pref,sep=""),"",name)},
@@ -27,7 +53,7 @@ listingDetailsFromList <- function(listingIDs,
   # Certain vars are trivial duplicates once the prefix is removed
   # Take only unique vars
   results <- results[,unique(names(results))]
-
+  
   # Change class of numeric vars
   numericList <- c("lat","lng","price","price.native","user.reviewee.count","bathrooms",
                    "bedrooms","beds","hosts.reviewee.count","min.nights","person.capacity",
@@ -36,48 +62,55 @@ listingDetailsFromList <- function(listingIDs,
                    "price.for.extra.person.native","guests.included","star.rating",
                    "weekend.price.native","monthly.price.native","weekly.price.native",
                    "square.feet")
-
+  
   # make sure the vars are in the dataset
   numericList <- numericList[numericList %in% names(results)]
-
+  
   results <- dplyr::mutate_at(.tbl=results,.cols=numericList,funs("as.numeric"))
-
+  
   results
 }
 
-
-mergeDetails <- function(searchResults, details){
+#' @rdname addDetails
+#' @section listingDetails
+#'  
+#' @description The following is a function that will take in a character vector of 
+#' listing IDs and return a dataset. This function does not necessarily need to be used
+#' with \code{locationSearch}.
+#' 
+#' 
+mergeDetails <- function(searchResults,details){
   # Filter out overlapping variables form the search results
   FilterVars <- function(i) {
-    if(
+    if( 
       # Redundant variables also in listing search
       i=="room.type" |
-      i=="lat" |
+      i=="lat" | 
       i=="lng" |
       i=="property.type" |
-      i=="bedrooms" |
+      i=="bedrooms" | 
       i=="bathrooms" |
-      i=="beds" |
-      i=="city" |
-      i=="instant.bookable" |
-      i=="is.business.travel.ready" |
-      i=="localized.city" |
+      i=="beds" | 
+      i=="city" | 
+      i=="instant.bookable" | 
+      i=="is.business.travel.ready" | 
+      i=="localized.city" | 
       i=="person.capacity" |
-      i=="primary.host.has.profile.pic" |
-      i=="primary.host.id" |
-      i=="primary.host.is.superhost" |
-      i=="property.type.id" |
-      i=="public.address" |
-      i=="reviews.count" |
-      i=="room.type.category" |
-      i=="star.rating" |
+      i=="primary.host.has.profile.pic" | 
+      i=="primary.host.id" | 
+      i=="primary.host.is.superhost" | 
+      i=="property.type.id" | 
+      i=="public.address" | 
+      i=="reviews.count" | 
+      i=="room.type.category" | 
+      i=="star.rating" | 
       i=="user.id"
     ){
       searchResults[i] <<- NULL
     }
   }
   lapply(names(searchResults),FilterVars)
-  left_join(searchResults,details,by="id")
+  dplyr::left_join(searchResults,details,by="id")
 }
 
 
@@ -89,19 +122,19 @@ getListingDetail <- function(listingID,
   )
   endpoint_url = paste("https://api.airbnb.com/v2/listings/",as.character(listingID),sep="")
   request = httr::RETRY("GET", url = constructGET(endpoint_url, params))
-
+  
   # if the request wasn't successful, stop
   if (request$status_code != 200)
     stop(paste0("Airbnb's API returned an error.\n\n",
                 paste(names(parsed_results), parsed_results,
                       sep = ": ", collapse = "\n")))
-
+  
   listing.details <- httr::content(request,as="parsed") %>%
     .$listing %>%
     unlist() %>%
     as.list() %>%
     bind_rows()
-
+  
   ## Function to get rid of unwanted variables (image URLS, formatting preferences, etc.)
   FilterVars <- function(i) {
     if(grepl(pattern="image",x=i) |
@@ -112,7 +145,7 @@ getListingDetail <- function(listingID,
        grepl(pattern="url",x=i) |
        grepl(pattern="name",x=i) |
        grepl(pattern="amenities_id",x=i) |
-       grepl(pattern="photo",x=i)
+       grepl(pattern="photo",x=i) 
     ){
       listing.details[i] <<- NULL
     }
@@ -122,10 +155,9 @@ getListingDetail <- function(listingID,
     }
   }
   lapply(names(listing.details),FilterVars)
-
+  
   names(listing.details) <- lapply(names(listing.details),gsub,pattern="_",replacement=".") %>%
-                            unlist()
-
+    unlist()
+  
   listing.details
 }
-
