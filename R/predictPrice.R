@@ -44,7 +44,7 @@ predictPrice <- function(listingID,
                           ){
 
   if(missing(previous.data.build) | missing(trainData)){
-    listing.detail <- listingDetailsFromList(listingID=listingID)
+    listing.detail <- listingDetails(listingID=listingID)
 
     # Get similar geographical listings based on zipcode
     cat("Pulling Data for Similar Listings.\n")
