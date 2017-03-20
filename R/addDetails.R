@@ -40,7 +40,7 @@ addDetails <- function(searchData){
 #' @param client.id best left alone. This is a key that authorizes requests to the Airbnb API.
 #' 
 #' @examples
-#' Example listing URL: https://www.airbnb.com/rooms/17634206?s=QAXAT6DD
+#' Example listing ID: 17634206
 #' listingDetails(listingIDs="17634206")
 #' 
 #' content  <- searchLocation("10019")
@@ -89,6 +89,11 @@ listingDetails <- function(listingIDs,
 #' @description The following is a function that will take in a character vector of
 #' listing IDs and return a dataset. This function does not necessarily need to be used
 #' with \code{locationSearch}.
+#' 
+#' @param searchResults a dataset of listings that is outputted from a call to 
+#' \code{searchLocation}.
+#' @param details a dataset of detailed listing information that is outputted from a 
+#' call to \code{listingDetails}
 #'
 #'
 mergeDetails <- function(searchResults,details){
@@ -130,12 +135,15 @@ mergeDetails <- function(searchResults,details){
 #' @description The following is a function that will take in a character vector of
 #' listing IDs and return a dataset. This function does not necessarily need to be used
 #' with \code{locationSearch}.
-#'
+#' 
+#' @param listingID a character vector of length one consisting of an Airbnb listing ID. 
+#' These can be found on the URLs of Airbnb listings or on the output of \code{searchLocation}.
+#' @param client.id best left alone. This is a key that authorizes requests to the Airbnb API.
 #'
 #' @importFrom magrittr %>%
 getListingDetail <- function(listingID,
-                             client_id = "d306zoyjsyarp7ifhu67rjxn52tv0t20") {
-  params = list(client_id=client_id,
+                             client.id = "d306zoyjsyarp7ifhu67rjxn52tv0t20") {
+  params = list(client_id=client.id,
                 "_format"="v1_legacy_for_p3",
                 locale = "en-US"
   )

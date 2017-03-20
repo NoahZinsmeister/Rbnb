@@ -19,7 +19,10 @@
 #' @param max_depth For advanced users. The maximum depth of a tree fitted by \code{xgboost}.
 #' @param eta For advanced users. The shrinkage parameter used to control the learning rate for
 #' \code{xgboost}.
-#' @param previous.data.build
+#' @param listing.detail a dataset for the particular listing if you've already pulled it using 
+#' \code{listingDetails(listingID)}.
+#' @param trainData a dataset consisting of listings with details if you've already pulled it 
+#' using \code{searchLocation()} and \code{addDetails()}.
 #'
 #' @examples
 #' #predictPrice(listingID="17634206")
@@ -42,7 +45,7 @@ predictPrice <- function(listingID,
                          trainData=NULL
                           ){
 
-  if(missing(previous.data.build) | missing(trainData)){
+  if(missing(listing.detail) | missing(trainData)){
     listing.detail <- listingDetails(listingID=listingID)
 
     # Get similar geographical listings based on zipcode
@@ -136,7 +139,7 @@ predictPrice <- function(listingID,
   dtest <- xgboost::xgb.DMatrix(as.matrix(testData),missing=NaN)
 
   # predict for test set
-  price.hat <- xgboost::predict(opt.model,dtest)
+  price.hat <- predict(opt.model,dtest)
 
   cat(paste("The predicted price based on similar listings is ",format(price.hat,digits=2),"\n",sep=""))
   pDif <- (price.hat-listing.detail[["price"]])/listing.detail[["price"]]
