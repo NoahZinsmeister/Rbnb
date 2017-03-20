@@ -1,3 +1,7 @@
+##
+## File written by noahwz
+##
+
 #' Describe characteristics of Airbnb listings.
 #'
 #' @description Given output from \code{\link{searchLocation}}, produces

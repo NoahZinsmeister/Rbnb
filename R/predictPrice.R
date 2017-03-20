@@ -1,3 +1,7 @@
+##
+## File written by Kroeger
+##
+
 #' Predict a price for an Airbnb listing using the characteristics of similar listings.
 #'
 #' @description Given a listing ID, \code{predictPrice} uses the \code{xgboost} package to predict a price
@@ -19,9 +23,9 @@
 #' @param max_depth For advanced users. The maximum depth of a tree fitted by \code{xgboost}.
 #' @param eta For advanced users. The shrinkage parameter used to control the learning rate for
 #' \code{xgboost}.
-#' @param listing.detail a dataset for the particular listing if you've already pulled it using 
+#' @param listing.detail a dataset for the particular listing if you've already pulled it using
 #' \code{listingDetails(listingID)}.
-#' @param trainData a dataset consisting of listings with details if you've already pulled it 
+#' @param trainData a dataset consisting of listings with details if you've already pulled it
 #' using \code{searchLocation()} and \code{addDetails()}.
 #'
 #'

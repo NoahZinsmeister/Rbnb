@@ -2,11 +2,14 @@
 % Please edit documentation in R/addDetails.R
 \name{addDetails}
 \alias{addDetails}
+\alias{addDetails}
 \alias{listingDetails}
 \alias{mergeDetails}
 \alias{getListingDetail}
 \title{Pull in detailed listing data to merge with location search data.}
 \usage{
+addDetails(searchData)
+
 listingDetails(listingIDs, client.id = "d306zoyjsyarp7ifhu67rjxn52tv0t20")
 
 mergeDetails(searchResults, details)
@@ -14,6 +17,8 @@ mergeDetails(searchResults, details)
 getListingDetail(listingID, client.id = "d306zoyjsyarp7ifhu67rjxn52tv0t20")
 }
 \arguments{
+\item{searchData}{a dataset of listings outputted from \code{searchLocation}.}
+
 \item{listingIDs}{a character vector of listing IDs. These can be found on the URLs
 of Airbnb listings or on the output of \code{searchLocation}.}
 
@@ -27,12 +32,10 @@ call to \code{listingDetails}}
 
 \item{listingID}{a character vector of length one consisting of an Airbnb listing ID.
 These can be found on the URLs of Airbnb listings or on the output of \code{searchLocation}.}
-
-\item{searchData}{a dataset of listings outputted from \code{searchLocation}.}
-
-\item{client.id}{best left alone. This is a key that authorizes requests to the Airbnb API.}
 }
 \description{
+Pull in detailed listing data to merge with location search data.
+
 After using the \code{searchLocation}, you can add greater detail on each listing
 using \code{addDetails}. It takes as an input the dataset of listings outputted from
 \code{searchLocation} and merges in details based on the listing ID. Note that this process

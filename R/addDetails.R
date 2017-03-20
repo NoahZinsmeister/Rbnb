@@ -1,3 +1,7 @@
+##
+## File written by Kroeger
+##
+
 #' Pull in detailed listing data to merge with location search data.
 #'
 #'
@@ -10,9 +14,6 @@
 #' @name addDetails
 NULL
 
-##
-## Written by Kroeger
-##
 
 #' @rdname addDetails
 #'

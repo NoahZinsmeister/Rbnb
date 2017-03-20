@@ -28,10 +28,10 @@ training new models after the specified number of rounds if cross validation err
 \item{eta}{For advanced users. The shrinkage parameter used to control the learning rate for
 \code{xgboost}.}
 
-\item{listing.detail}{a dataset for the particular listing if you've already pulled it using 
+\item{listing.detail}{a dataset for the particular listing if you've already pulled it using
 \code{listingDetails(listingID)}.}
 
-\item{trainData}{a dataset consisting of listings with details if you've already pulled it 
+\item{trainData}{a dataset consisting of listings with details if you've already pulled it
 using \code{searchLocation()} and \code{addDetails()}.}
 }
 \description{
