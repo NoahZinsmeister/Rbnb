@@ -32,7 +32,7 @@ much of the Airbnb API.
 Before we get started, let's install Rbnb. 
 ```{r eval=FALSE}
 library(devtools)
-install_github("NoahZinsmeister/Rbnb")
+devtools::install_github("NoahZinsmeister/Rbnb")
 ```
 
 # Searching by Location
@@ -146,6 +146,6 @@ can also construct training/test sets using listings returned from the
 It's then fairly straightforward to predict the price of our input listing using
 xgboost!
 
-```{r eval=FALSE}
+```{r}
 Rbnb::predictPrice("17582836", maxSample = 10)
 ```

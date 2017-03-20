@@ -68,7 +68,7 @@ predictPrice <- function(listingID,
     cat("Merging in the details for similar listings.\n")
     cat("This may take a while.\n")
     cat("Try reducing maxSample if it takes too long.\n")
-    trainData <-listingDetailsFromList(trainData$id) %>%
+    trainData <-listingDetails(trainData$id) %>%
     {mergeDetails(trainData,.)}
     cat("Done merging details!\n")
   }
