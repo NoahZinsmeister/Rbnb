@@ -1,14 +1,10 @@
 ---
-title: "Report"
+title: "Summary"
 author: "Alexander Kroeger, Noah Zinsmeister"
 date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette:
-          toc: true
-          toc_float:
-            collapsed: false
-          number_sections: true
+output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Report}
+  %\VignetteIndexEntry{summary}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -49,7 +45,7 @@ data for this area.
 ```{r eval=FALSE}
 library(Rbnb)
 
-location = 10019
+location = "10019"
 content = Rbnb::searchLocation(location, verbose=FALSE)
 
 ```
@@ -59,7 +55,7 @@ we've included a static pull of the 10019 data (`10019.RDS`) that you can load
 in like so (in this example we'll be using the static pull):
 
 ```{r}
-data(zip10019, package="Rbnb")
+data("zip10019", package="Rbnb")
 content = zip10019
 rm(zip10019)
 ```
