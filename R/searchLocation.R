@@ -169,8 +169,7 @@ parseMetadata = function(metadata) {
     }
     num.listings = facets$bedrooms$cumulative.count[1]
     # factor variables
-    for (i in c("room_type", "hosting_amenity_ids", "top_amenities",
-                "languages")) {
+    for (i in c("room_type", "hosting_amenity_ids", "top_amenities")) {
         facets[[i]] = lapply(metadata$facets[[i]], lapply,
                              function(x) ifelse(is.null(x), 0, x)) %>%
             dplyr::bind_rows(.) %>%
