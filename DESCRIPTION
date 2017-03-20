@@ -1,0 +1,17 @@
+Package: Rbnb
+Type: Package
+Title: Experimental Front End for the Airbnb API
+Version: 0.1.0
+Authors@R: c(
+    person("Alexander", "Kroeger", email = "alexrkroeger@gmail.com",
+           role = c("aut", "cre")),
+    person("Noah", "Zinsmeister", email = "noahwz@gmail.com",
+           role = c("aut", "cre"))
+    )
+Maintainer: Noah Zinsmeister <noahwz@gmail.com>
+URL: https://github.com/NoahZinsmeister/Rbnb
+Description: Pulls and analyzes detailed data on Airbnb listings for
+    user-defined locations.
+License: GPL (>= 3)
+Encoding: UTF-8
+LazyData: true

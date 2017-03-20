@@ -1,28 +1,24 @@
-library(httr)
-library(plyr)
-library(dplyr)
-library(magrittr)
-library(ggplot2)
-library(tibble)
-
-constructGET = function(base.url, parameters) {
-    # first, replace all spaces with %20
-    parameters = lapply(parameters, function(x) gsub(" ", "%20", x))
-    # append param names and values into a string like: name=value&...
-    url.args = paste(names(parameters), parameters, sep = "=", collapse = "&")
-    # return the appropriate url call
-    paste0(base.url, "?", url.args)
-}
-
-checkRequest = function(request) {
-    # if the request wasn't successful, stop
-    if (request$status_code != 200)
-        stop(paste0("Airbnb's API returned an error.\n\n",
-                    paste(names(content(request, as = "parsed")),
-                          content(request, as = "parsed"),
-                          sep = ": ", collapse = "\n")))
-}
-
+#' Search for Airbnb listings by location.
+#'
+#' @description Given an input value, lets Airbnb parse it, and return listings
+#' in the same region.
+#'
+#' @param location a string representing the desired search region.
+#' @param verbose a boolean indicating whether or not to print status updates.
+#' @param metadata.only a boolean indicating whether or not to return just
+#' metadata (no listings).
+#' @param client.id a string represting your own Airbnb API key.
+#' @return named list containing the serach output.
+#' @export
+#'
+#' @importFrom httr RETRY
+#' @importFrom magrittr %>%
+#' @importFrom dplyr bind_rows, mutate, select, arrange, rename, lead,
+#' mutate_at
+#'
+#' @examples
+#' searchLocation("10019")
+#'
 searchLocation = function(location,
                           verbose = TRUE,
                           metadata.only = FALSE,
@@ -38,7 +34,7 @@ searchLocation = function(location,
                   locale = "en-US",
                   currency = "USD",
                   price_min = 0,
-                  price_max = 2000,
+                  price_max = 2500,
                   sort = 1,
                   "_format" = "for_search_results",
                   "_limit" = 1,
@@ -75,8 +71,8 @@ searchLocation = function(location,
         parsed.results$metadata$listings_count
     }
 
-    # starting cutoffs [0-2000]
-    price.cutoffs = c(0, 2001)
+    # starting cutoffs [0-2500]
+    price.cutoffs = c(0, 2501)
 
     # make cutoffs more granular until we have bins of <300 listings
     while (any(num.listings > 300)) {
@@ -131,6 +127,24 @@ searchLocation = function(location,
                         data = parseResults(all.results)))
 }
 
+constructGET = function(base.url, parameters) {
+    # first, replace all spaces with %20
+    parameters = lapply(parameters, function(x) gsub(" ", "%20", x))
+    # append param names and values into a string like: name=value&...
+    url.args = paste(names(parameters), parameters, sep = "=", collapse = "&")
+    # return the appropriate url call
+    paste0(base.url, "?", url.args)
+}
+
+checkRequest = function(request) {
+    # if the request wasn't successful, stop
+    if (request$status_code != 200)
+        stop(paste0("Airbnb's API returned an error.\n\n",
+                    paste(names(content(request, as = "parsed")),
+                          content(request, as = "parsed"),
+                          sep = ": ", collapse = "\n")))
+}
+
 parseMetadata = function(metadata) {
     # geography info
     geography = list(city = metadata$geography$city,
@@ -172,12 +186,12 @@ parseMetadata = function(metadata) {
 
 parseResults = function(results) {
     results <- dplyr::bind_rows(lapply(results, function(x) dplyr::bind_rows(as.list(unlist(x)))))
-    
+
     filterResults <- function(i) {
       if(grepl(pattern="image",x=i) |
          grepl(pattern="url",x=i) |
          grepl(pattern="photo",x=i) |
-         grepl(pattern="png",x=i) | 
+         grepl(pattern="png",x=i) |
          grepl(pattern="scrim",x=i) |
          grepl(pattern="listing.user.id",x=i)
       ){
@@ -185,17 +199,17 @@ parseResults = function(results) {
       }
     }
     lapply(names(results),filterResults)
-    
+
     #remove listing prefix
     remPref <- function(name,pref){
       gsub(paste("^",pref,sep=""),"",name)
     }
     names(results) <- lapply(names(results),remPref,pref="listing.")
-    
+
     # replace underscores with periods
     names(results) <- lapply(names(results),gsub,pattern="_",replacement=".") %>%
                         unlist()
-    
+
     # change class of certain vars to numeric
     numericList <- c("bathrooms","beds","bedrooms","lat","lng","picture.count",
                      "person.capacity","reviews.count","star.rating","pricing.quote.guests",
@@ -203,17 +217,12 @@ parseResults = function(results) {
                      "pricing.quote.localized.service.fee","pricing.quote.localized.total.price",
                      "pricing.quote.long.term.discount.amount.as.guest","pricing.quote.nightly.price",
                      "pricing.quote.service.fee","pricing.quote.total.price")
-    
+
     # make sure the vars are in the dataset
     numericList <- numericList[numericList %in% names(results)]
-    
+
     results <- dplyr::mutate_at(.tbl=results,.cols=numericList,funs("as.numeric"))
 
     results
 }
 
-
-# location = "13035"
-# location = "60611"
-# content = searchLocation(location)
-# result <- content$results$data

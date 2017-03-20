@@ -1,0 +1,169 @@
+---
+title: "Report"
+author: "Alexander Kroeger, Noah Zinsmeister"
+output:
+    rmarkdown::html_vignette:
+        toc: true
+        toc_float:
+            collapsed: false
+        number_sections: true
+        df_print: tibble
+vignette: >
+  %\VignetteIndexEntry{Report}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+output:
+    md_document:
+        toc: true
+        df_print: tibble
+        variant: markdown_github
+    html_document:
+        toc: true
+        toc_float:
+            collapsed: false
+        number_sections: true
+        df_print: tibble
+
+
+# Introduction {.tabset}
+Rbnb is an experimental front end for the (unofficial) Airbnb API. In addition
+to pulling detailed data on Airbnb listings based on arbitrary user-defined
+locations, Rbnb also provides a variety of visual summaries of these listing.
+
+Use cases include, but are not limited to:
+
+- Prospective Airbnb guests and hosts who want to get a sense of the Airbnb
+market in their target location.
+- Current Airbnb hosts who wish to see how the price of their existing listing
+compares to similiar listings in their area.
+- Researchers interesting in analyzing granual microdata on short-term
+rental markets.
+
+We, the authors (Alexander Kroeger and Noah Zinsmeister), are grateful to
+[The Official Unofficial Airbnb API Docs](airbnbapi.org) for documenting
+much of the Airbnb API.
+
+# Installation
+
+Before we get started, let's install Rbnb. 
+```{r eval=FALSE}
+library(devtools)
+install_github("NoahZinsmeister/Rbnb")
+```
+
+# Searching by Location
+
+The first thing you may want to do after installing Rbnb is to try searching
+for listings in your current zip code. For example, one of us lives in 10019,
+a zip that includes Hell's Kitchen and midtown Manhattan. Let's pull listings
+data for this area.
+
+```{r eval=TRUE}
+library(Rbnb)
+
+location = 10019
+content = Rbnb::searchLocation(location, verbose=FALSE)
+
+```
+
+Note: if you are unable to access the internet or the Airbnb API specifically,
+we've included a static pull of the 10019 data (`10019.RDS`) that you can load
+in like so (in this example we'll be using the static pull):
+
+```{r eval=FALSE}
+content = data(10019, package=Rbnb)
+```
+
+And here's what we have!
+
+```{r}
+str(content, max.level = 1)
+```
+
+As you can see, `searchLocation` returns a list with three elements:
+-passed.location
+-metadata
+-results
+
+Let's take a closer look at these last two elements.
+
+## Metadata
+
+Airbnb spits out some interesting metadata when given a location.
+
+```{r}
+str(content$metadata, max.level = 1)
+```
+
+In our example, Airbnb provided metadata on
+**`r content$metadata$num.listings`** listings for your search term
+'**`r as.character(content$passed.location)`**'. Your search term was recognized
+as a **`r content$metadata$geography$result.type`**, specifically a
+**`r content$metadata$geography$precision`**, which Airbnb resolved to the
+following location: **`r content$metadata$geography$city`**,
+**`r content$metadata$geography$state`**,
+**`r content$metadata$geography$country`**. We can even pull up the
+[center of our search area](`r content$metadata$geography$google.maps.loc`)
+on Google Maps.
+
+The facets contain various distributional statistics, e.g.:
+```{r}
+content$metadata$facets$bedrooms
+```
+
+We can use `describeMetadata` for a better look at some of these facets.
+
+```{r}
+Rbnb::describeMetadata(content)
+```
+
+If we only want to take a look at this metadata without going through the
+(sometimes lengthy) process of downloading individual listings, we can run the
+following:
+```{r eval=FALSE}
+Rbnb::searchLocation(location, metadata.only=TRUE, verbose=FALSE)
+```
+
+## Results
+
+Here's a look at the actual dataframe we've pulled.
+```{r}
+content$results$data
+```
+
+This dataframe contains **`r content$metadata$num.listings`** listings related
+to your search term '**`r as.character(content$passed.location)`**'.
+
+We can use `describeResults` to plot some interesting aspects of the data.
+
+```{r}
+Rbnb::describeResults(content)
+```
+
+And if we want to plot the location of listings on a map, we can use `showMap`.
+
+```{r}
+Rbnb::showMap(content)
+```
+
+# Listing Details
+
+To come.
+
+# Price Prediction
+
+Let's say we're looking at an existing Airbnb listing, and are curious as to how
+its price compares with that of comparable listings in the same area. Using
+`getListingDetail`, we can extract a vector of features about this listing. We
+can also construct training/test sets using listings returned from the
+`searchLocation` function called with the (internally calculated) zip code.
+It's then fairly straightforward to predict the price of our input listing using
+xgboost!
+
+```{r eval=FALSE}
+Rbnb::predictPrice("17582836")
+```
+
+rmarkdown::render('Report.Rmd', output_format = "all",
+                  output_file=c("README.md", "Report.html"))
