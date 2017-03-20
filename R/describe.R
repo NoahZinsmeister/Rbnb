@@ -1,9 +1,9 @@
 #' Describe characteristics of Airbnb listings.
-#' 
+#'
 #' @description Given output from \code{\link{searchLocation}}, produces
 #' summary charts based on metadata and results.
 #' @rdname describe
-#'
+#' @name describe
 #' @param content The output of \code{\link{searchLocation}}.
 #' @export
 #'
@@ -13,7 +13,6 @@
 #' @importFrom scales percent
 #' @importFrom gridExtra grid.arrange
 #' @importFrom grid textGrob, gpar
-#' @importFrom 
 #' @importFrom dplyr bind_rows, mutate, select, arrange, rename, lead,
 #' mutate_at
 #'

@@ -4,7 +4,7 @@ Title: Experimental Front End for the Airbnb API
 Version: 0.1.0
 Authors@R: c(
     person("Alexander", "Kroeger", email = "alexrkroeger@gmail.com",
-           role = c("aut", "cre")),
+           role = c("aut")),
     person("Noah", "Zinsmeister", email = "noahwz@gmail.com",
            role = c("aut", "cre"))
     )
@@ -15,3 +15,11 @@ Description: Pulls and analyzes detailed data on Airbnb listings for
 License: GPL (>= 3)
 Encoding: UTF-8
 LazyData: true
+Collate:
+    Rbnb.R
+    zip_10019.R
+    searchLocation.R
+    addDetails.R
+    predictPrice.R
+    describe.R
+RoxygenNote: 6.0.1
