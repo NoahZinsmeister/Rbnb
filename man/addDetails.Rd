@@ -19,13 +19,13 @@ of Airbnb listings or on the output of \code{searchLocation}.}
 
 \item{client.id}{best left alone. This is a key that authorizes requests to the Airbnb API.}
 
-\item{searchResults}{a dataset of listings that is outputted from a call to 
+\item{searchResults}{a dataset of listings that is outputted from a call to
 \code{searchLocation}.}
 
-\item{details}{a dataset of detailed listing information that is outputted from a 
+\item{details}{a dataset of detailed listing information that is outputted from a
 call to \code{listingDetails}}
 
-\item{listingID}{a character vector of length one consisting of an Airbnb listing ID. 
+\item{listingID}{a character vector of length one consisting of an Airbnb listing ID.
 These can be found on the URLs of Airbnb listings or on the output of \code{searchLocation}.}
 
 \item{searchData}{a dataset of listings outputted from \code{searchLocation}.}
@@ -49,11 +49,4 @@ with \code{locationSearch}.
 The following is a function that will take in a character vector of
 listing IDs and return a dataset. This function does not necessarily need to be used
 with \code{locationSearch}.
-}
-\examples{
-Example listing ID: 17634206
-listingDetails(listingIDs="17634206")
-
-
-
 }

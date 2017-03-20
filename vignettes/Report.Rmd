@@ -1,30 +1,13 @@
 ---
-title: "Report"
+title: "Rbnb"
 author: "Alexander Kroeger, Noah Zinsmeister"
-output:
-    rmarkdown::html_vignette:
-        toc: true
-        toc_float:
-            collapsed: false
-        number_sections: true
-        df_print: tibble
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Report}
+  %\VignetteIndexEntry{Vignette Title}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
-output:
-    md_document:
-        toc: true
-        df_print: tibble
-        variant: markdown_github
-    html_document:
-        toc: true
-        toc_float:
-            collapsed: false
-        number_sections: true
-        df_print: tibble
-
 
 # Introduction {.tabset}
 Rbnb is an experimental front end for the (unofficial) Airbnb API. In addition
@@ -59,7 +42,7 @@ for listings in your current zip code. For example, one of us lives in 10019,
 a zip that includes Hell's Kitchen and midtown Manhattan. Let's pull listings
 data for this area.
 
-```{r eval=TRUE}
+```{r eval=FALSE}
 library(Rbnb)
 
 location = 10019
@@ -71,8 +54,10 @@ Note: if you are unable to access the internet or the Airbnb API specifically,
 we've included a static pull of the 10019 data (`10019.RDS`) that you can load
 in like so (in this example we'll be using the static pull):
 
-```{r eval=FALSE}
-content = data(zip10019, package=Rbnb)
+```{r}
+data(zip10019, package="Rbnb")
+content = zip10019
+rm(zip10019)
 ```
 
 And here's what we have!
@@ -162,8 +147,5 @@ It's then fairly straightforward to predict the price of our input listing using
 xgboost!
 
 ```{r eval=FALSE}
-Rbnb::predictPrice("17582836")
+Rbnb::predictPrice("17582836", maxSample = 10)
 ```
-
-rmarkdown::render('Report.Rmd', output_format = "all",
-                  output_file=c("README.md", "Report.html"))
