@@ -1,17 +1,43 @@
-library(httr)
-library(plyr)
-library(dplyr)
-library(magrittr)
-library(tibble)
-# from httr RETRY content
-# from dplyr bind_rows select
+#' Pull in detailed listing data to merge with location search data.
+#'
+#' @description After using the \code{searchLocation}, you can add greater detail on each listing
+#' using \code{addDetails}. It takes as an input the dataset of listings outputted from 
+#' \code{searchLocation} and merges in details based on the listing ID. Note that this process 
+#' is very time consuming, and so it may be unwise to pass too large of a listing dataset.
+#'
+#' @param searchData a dataset of listings outputted from \code{searchLocation}.
+#'
+#' @examples 
+#' content  <- searchLocation("10019")
+#' searchData <- content$results$data
+#' listingsWithDetails <- addDetails(searchData)
+#'
+#' @export
+#'
+#' @importFrom httr RETRY content
+#' @importFrom dplyr bind_rows mutate_at left_join
+#' @importFrom magrittr %>%
+#'
+#' @keywords dplot
 
+## 
+## Written by Kroeger
+##
 addDetails <- function(searchData){
-  combined <-listingDetailsFromList(searchData$id) %>%
+  combined <-listingDetails(searchData$id) %>%
       {mergeDetails(searchData,.)}
 }
 
-listingDetailsFromList <- function(listingIDs,
+#' @rdname addDetails
+#' @section listingDetails
+#'  
+#' @description The following is a function that will take in a character vector of 
+#' listing IDs and return a dataset. This function does not necessarily need to be used
+#' with \code{locationSearch}.
+#' 
+#' @export
+#' 
+listingDetails <- function(listingIDs,
                               client_id = "d306zoyjsyarp7ifhu67rjxn52tv0t20") {
   results <- dplyr::bind_rows(lapply(unique(listingIDs),
                      function(x) getListingDetail(x, client_id = client_id)))
@@ -45,7 +71,14 @@ listingDetailsFromList <- function(listingIDs,
   results
 }
 
-
+#' @rdname addDetails
+#' @section listingDetails
+#'  
+#' @description The following is a function that will take in a character vector of 
+#' listing IDs and return a dataset. This function does not necessarily need to be used
+#' with \code{locationSearch}.
+#' 
+#' 
 mergeDetails <- function(searchResults,details){
   # Filter out overlapping variables form the search results
   FilterVars <- function(i) {
@@ -77,7 +110,7 @@ mergeDetails <- function(searchResults,details){
     }
   }
   lapply(names(searchResults),FilterVars)
-  left_join(searchResults,details,by="id")
+  dplyr::left_join(searchResults,details,by="id")
 }
 
 
