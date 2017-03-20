@@ -18,7 +18,9 @@
 #' @importFrom dplyr bind_rows mutate_at left_join
 #' @importFrom magrittr %>%
 #'
-#' @keywords dplot
+#' @name addDetails
+NULL
+#>NULL
 
 ##
 ## Written by Kroeger
@@ -29,7 +31,6 @@ addDetails <- function(searchData){
 }
 
 #' @rdname addDetails
-#' @section listingDetails
 #'
 #' @description The following is a function that will take in a character vector of
 #' listing IDs and return a dataset. This function does not necessarily need to be used
@@ -72,7 +73,6 @@ listingDetails <- function(listingIDs,
 }
 
 #' @rdname addDetails
-#' @section listingDetails
 #'
 #' @description The following is a function that will take in a character vector of
 #' listing IDs and return a dataset. This function does not necessarily need to be used
@@ -113,8 +113,7 @@ mergeDetails <- function(searchResults,details){
   dplyr::left_join(searchResults,details,by="id")
 }
 
-#' @rdname getListingDetail
-#' @section getListingDetail
+#' @rdname addDetails
 #'
 #' @description The following is a function that will take in a character vector of
 #' listing IDs and return a dataset. This function does not necessarily need to be used
