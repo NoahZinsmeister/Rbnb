@@ -1,10 +1,10 @@
 ---
-title: "Rbnb"
+title: "Report"
 author: "Alexander Kroeger, Noah Zinsmeister"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteIndexEntry{Report}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
