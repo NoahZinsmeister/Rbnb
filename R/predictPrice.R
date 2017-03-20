@@ -32,6 +32,8 @@
 #' @importFrom xgboost xgb.DMatrix xgb.cv xgb.train
 #' @importFrom dplyr filter select rename bind_rows left_join
 #' @importFrom magrittr %>%
+#' @importFrom utils capture.output
+#' @importFrom stats predict
 #'
 
 predictPrice <- function(listingID,
@@ -46,7 +48,7 @@ predictPrice <- function(listingID,
                           ){
 
   if(missing(listing.detail) | missing(trainData)){
-    listing.detail <- listingDetails(listingID=listingID)
+    listing.detail <- listingDetails(listingIDs=listingID)
 
     # Get similar geographical listings based on zipcode
     cat("Pulling Data for Similar Listings.\n")
@@ -122,7 +124,7 @@ predictPrice <- function(listingID,
 
   ## Train the model
   cat("Starting Prediction.\n")
-  capture.output(xgb.model <- xgboost::xgb.cv(data=dx,
+  utils::capture.output(xgb.model <- xgboost::xgb.cv(data=dx,
                                               objective='reg:linear',
                                               nfold=nfold,
                                               early_stopping_rounds = early_stopping_rounds,
@@ -139,7 +141,7 @@ predictPrice <- function(listingID,
   dtest <- xgboost::xgb.DMatrix(as.matrix(testData),missing=NaN)
 
   # predict for test set
-  price.hat <- predict(opt.model,dtest)
+  price.hat <- stats::predict(opt.model,dtest)
 
   cat(paste("The predicted price based on similar listings is ",format(price.hat,digits=2),"\n",sep=""))
   pDif <- (price.hat-listing.detail[["price"]])/listing.detail[["price"]]

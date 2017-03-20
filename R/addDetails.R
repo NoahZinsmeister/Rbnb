@@ -53,7 +53,7 @@ addDetails <- function(searchData){
 listingDetails <- function(listingIDs,
                            client.id = "d306zoyjsyarp7ifhu67rjxn52tv0t20") {
   results <- dplyr::bind_rows(lapply(unique(listingIDs),
-                                     function(x) getListingDetail(x, client_id = client.id)))
+                                     function(x) getListingDetail(x, client.id = client.id)))
 
   # remove extra user. prefix
   names(results) <- lapply(names(results),
