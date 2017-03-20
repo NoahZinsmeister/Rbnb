@@ -35,7 +35,6 @@ addDetails <- function(searchData){
 #' @param client.id best left alone. This is a key that authorizes requests to the Airbnb API.
 #' 
 #' @examples
-#' Example listing ID: 17634206
 #' listingDetails(listingIDs="17634206")
 #' 
 #' 
