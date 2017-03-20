@@ -39,7 +39,6 @@ ID is "17634206." Passing this value as a character string will yield a price pr
 on its characteristics, implying over- or undervaluation.
 }
 \examples{
-Example listing URL: https://www.airbnb.com/rooms/17634206?s=QAXAT6DD
-predictPrice(listingID="17634206")
+#predictPrice(listingID="17634206")
 
 }
