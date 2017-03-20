@@ -32,19 +32,6 @@
 #' @importFrom magrittr %>%
 #'
 
-# from dplyr filter select rename bind_rows left_join
-# from xgboost xgb.DMatrix xgb.train predict
-listingID <- "15677560"
-maxSample=1000
-nfold=10
-nrounds=1000
-early_stopping_rounds=50
-max_depth=4
-eta=1
-
-
-listing.detail <- getListingDetail("17634206")
-
 predictPrice <- function(listingID,
                          maxSample=500,
                          nfold=10,
