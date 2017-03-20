@@ -147,5 +147,8 @@ It's then fairly straightforward to predict the price of our input listing using
 xgboost!
 
 ```{r}
-Rbnb::predictPrice("17582836", maxSample = 10)
+data("trainData", package="Rbnb")
+data("listing.detail", package="Rbnb")
+
+Rbnb::predictPrice("12170773", maxSample = 400, listing.detail = listing.detail, trainData = trainData)
 ```
