@@ -34,13 +34,26 @@ addDetails <- function(searchData){
 #' @description The following is a function that will take in a character vector of
 #' listing IDs and return a dataset. This function does not necessarily need to be used
 #' with \code{locationSearch}.
+#' 
+#' @param listingIDs a character vector of listing IDs. These can be found on the URLs
+#' of Airbnb listings or on the output of \code{searchLocation}.
+#' @param client.id best left alone. This is a key that authorizes requests to the Airbnb API.
+#' 
+#' @examples
+#' Example listing URL: https://www.airbnb.com/rooms/17634206?s=QAXAT6DD
+#' listingDetails(listingIDs="17634206")
+#' 
+#' content  <- searchLocation("10019")
+#' searchData <- content$results$data
+#' listingsDetails <- listingDetails(searchData)
+#' 
 #'
 #' @export
 #'
 listingDetails <- function(listingIDs,
-                           client_id = "d306zoyjsyarp7ifhu67rjxn52tv0t20") {
+                           client.id = "d306zoyjsyarp7ifhu67rjxn52tv0t20") {
   results <- dplyr::bind_rows(lapply(unique(listingIDs),
-                                     function(x) getListingDetail(x, client_id = client_id)))
+                                     function(x) getListingDetail(x, client_id = client.id)))
 
   # remove extra user. prefix
   names(results) <- lapply(names(results),
