@@ -4,13 +4,14 @@
 \alias{addDetails}
 \alias{listingDetails}
 \alias{mergeDetails}
+\alias{getListingDetail}
 \title{Pull in detailed listing data to merge with location search data.}
 \usage{
-addDetails(searchData)
-
 listingDetails(listingIDs, client_id = "d306zoyjsyarp7ifhu67rjxn52tv0t20")
 
 mergeDetails(searchResults, details)
+
+getListingDetail(listingID, client_id = "d306zoyjsyarp7ifhu67rjxn52tv0t20")
 }
 \arguments{
 \item{searchData}{a dataset of listings outputted from \code{searchLocation}.}
@@ -28,17 +29,14 @@ with \code{locationSearch}.
 The following is a function that will take in a character vector of
 listing IDs and return a dataset. This function does not necessarily need to be used
 with \code{locationSearch}.
-}
-\section{listingDetails}{
-NA
 
-NA
+The following is a function that will take in a character vector of
+listing IDs and return a dataset. This function does not necessarily need to be used
+with \code{locationSearch}.
 }
-
 \examples{
 content  <- searchLocation("10019")
 searchData <- content$results$data
 listingsWithDetails <- addDetails(searchData)
 
 }
-\keyword{dplot}

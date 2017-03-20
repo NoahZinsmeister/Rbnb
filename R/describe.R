@@ -5,16 +5,13 @@
 #' @rdname describe
 #' @name describe
 #' @param content The output of \code{\link{searchLocation}}.
-#' @export
 #'
 #' @importFrom ggplot2 ggplot, aes, geom_bar, geom_text, geom_histogram,
 #' geom_point, labs, scale_x_continuous, scale_x_discrete, scale_color_gradient
 #' @importFrom ggmap ggmap
 #' @importFrom scales percent
 #' @importFrom gridExtra grid.arrange
-#' @importFrom grid textGrob, gpar
-#' @importFrom dplyr bind_rows, mutate, select, arrange, rename, lead,
-#' mutate_at
+#' @importFrom grid textGrob, gpar, mutate_at
 #'
 NULL
 

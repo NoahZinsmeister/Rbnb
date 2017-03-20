@@ -12,7 +12,7 @@
 #' @export
 #'
 #' @importFrom httr RETRY
-#' @importFrom magrittr `%>%`
+#' @importFrom magrittr %>%
 #' @importFrom dplyr bind_rows, mutate, select, arrange, rename, lead,
 #' mutate_at
 #'
