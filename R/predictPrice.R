@@ -29,7 +29,7 @@
 #'
 #' @export
 #'
-#' @importFrom xgboost xgb.DMatrix xgb.cv xgb.train predict.xgb.Booster
+#' @importFrom xgboost xgb.DMatrix xgb.cv xgb.train
 #' @importFrom dplyr filter select rename bind_rows left_join
 #' @importFrom magrittr %>%
 #'
