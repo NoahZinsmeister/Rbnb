@@ -2,9 +2,9 @@
 #'
 #' @description Given a listing ID, \code{predictPrice} uses the \code{xgboost} package to predict a price
 #' for that listing based on its characteristics and data from nearby listings. A listing ID can be found
-#' on the end of the URL for the listing on Airbnb's site. For example, a listing URL for Airbnb 
+#' on the end of the URL for the listing on Airbnb's site. For example, a listing URL for Airbnb
 #' looks like \code{https://www.airbnb.com/rooms/17634206?s=QAXAT6DD}. In this example, the listing
-#' ID is "17634206." Passing this value as a character string will yield a price prediction based 
+#' ID is "17634206." Passing this value as a character string will yield a price prediction based
 #' on its characteristics, implying over- or undervaluation.
 #'
 #' @param listingID the ID that Airbnb has assigned to the listing. This can be taken from the end of a listing's
@@ -12,22 +12,22 @@
 #' @param maxSample The maximum number of nearby listings on which to base the price prediction. There is a
 #' tradeoff-a higher value will increase prediction precision, but it will take longer to run.
 #' @param nfold For advanced users. The number of cross validation folds used by \code{xgboost}.
-#' @param nrounds For advanced users. The maximum number of rounds that \code{xgboost} will run 
+#' @param nrounds For advanced users. The maximum number of rounds that \code{xgboost} will run
 #' when finding the optimal number of rounds through cross validation.
 #' @param early_stopping_rounds For advanced users. This parameter will cause xgboost to stop
 #' training new models after the specified number of rounds if cross validation error does not improve.
 #' @param max_depth For advanced users. The maximum depth of a tree fitted by \code{xgboost}.
 #' @param eta For advanced users. The shrinkage parameter used to control the learning rate for
 #' \code{xgboost}.
-#' @param previous.data.build 
+#' @param previous.data.build
 #'
-#' @examples 
+#' @examples
 #' Example listing URL: https://www.airbnb.com/rooms/17634206?s=QAXAT6DD
 #' predictPrice(listingID="17634206")
 #'
 #' @export
 #'
-#' @importFrom xgboost xgb.DMatrix xgb.cv xgb.train predict.xgb.Booster
+#' @importFrom xgboost xgb.DMatrix xgb.cv xgb.train
 #' @importFrom dplyr filter select rename bind_rows left_join
 #' @importFrom magrittr %>%
 #'
@@ -42,22 +42,22 @@ predictPrice <- function(listingID,
                          listing.detail=NULL,
                          trainData=NULL
                           ){
-  
+
   if(missing(previous.data.build) | missing(trainData)){
     listing.detail <- listingDetailsFromList(listingID=listingID)
-    
+
     # Get similar geographical listings based on zipcode
     cat("Pulling Data for Similar Listings.\n")
     trainData <- searchLocation(location=listing.detail$zipcode) %>%
     {.$results$data}
     cat("Done!\n")
-    
+
     # Take a random sample if the number of listings is above the cutoff
     if(nrow(trainData)>maxSample){
       sample <- sample(1:nrow(trainData),maxSample)
       trainData <- trainData[sample,]
     }
-    
+
     # Merge in details of the listings -- this is unfortunately slow
     cat("Merging in the details for similar listings.\n")
     cat("This may take a while.\n")
@@ -66,13 +66,13 @@ predictPrice <- function(listingID,
     {mergeDetails(trainData,.)}
     cat("Done merging details!\n")
   }
-  
+
   # Ensure that the listing of interest is in the dataset
   # If not, add it in for further processing
   if(!(listing.detail$id %in% trainData$id)){
     trainData <- dplyr::bind_rows(trainData,listing.detail)
   }
-  
+
   # Keep variables on which to train XGBoost + id and price
   varlist <- c("id","price","lat","lng","bedrooms","beds","bathrooms","room.type",
                "instant.bookable","is.business.travel.ready","reviews.count",
@@ -83,13 +83,13 @@ predictPrice <- function(listingID,
                )
   # Keep out of this set those that are in the listing of interest and the other listings
   varlist <- varlist[varlist %in% names(listing.detail) & varlist %in% names(trainData)]
-  
+
   trainData <- trainData[,names(trainData) %in% varlist | grepl("^amenity.",names(trainData))]
-  
+
   # If an amentity is missing, assume that it doesn't have that amenity
   amenity.index <- vapply(names(trainData),grepl,FUN.VALUE=TRUE,pattern="^amenity")
   trainData[,amenity.index][is.na(trainData[,amenity.index])] <- FALSE
-  
+
   # Convert character to numeric
   pred <- names(trainData)
   for (p in pred) {
@@ -102,22 +102,22 @@ predictPrice <- function(listingID,
       }
     }
   }
-  
+
   # Train on everything but the user's own listing
   testData <- dplyr::filter(trainData,id==listingID)
   trainData <- dplyr::filter(trainData,id!=listingID)
-  
+
   # Dependent variable = price
   y <- trainData$price
-  
+
   # Get rid of ID var for prediction, and price for test set
   testData <- dplyr::select(testData,-id,-price)
   trainData <- dplyr::select(trainData,-id,-price)
-  
+
   matrix <- data.matrix(trainData)
   ## Create xgboost dataset
   dx <- xgboost::xgb.DMatrix(data.matrix(trainData),label=y,missing=NaN)
-  
+
   ## Train the model
   cat("Starting Prediction.\n")
   capture.output(xgb.model <- xgboost::xgb.cv(data=dx,
@@ -128,21 +128,21 @@ predictPrice <- function(listingID,
                                               max_depth=max_depth,
                                               eta=eta,
                                               maximize=FALSE))
-  
+
   # Train the optimal model
   opt.model <- xgboost::xgb.train(data=dx,
                                   nrounds=xgb.model$best_iteration,
                                   max_depth=max_depth,
                                   eta=eta)
   dtest <- xgboost::xgb.DMatrix(as.matrix(testData),missing=NaN)
-  
+
   # predict for test set
   price.hat <- predict(opt.model,dtest)
-  
+
   cat(paste("The predicted price based on similar listings is ",format(price.hat,digits=2),"\n",sep=""))
   pDif <- (price.hat-listing.detail[["price"]])/listing.detail[["price"]]
   cat(paste("This represents a ",format(100*abs(pDif),digits=2),"%",ifelse(pDif>0," premium"," discount")," to the current listing price.\n",sep=""))
-  
+
   list(listingID=listingID,
        currentPrice=listing.detail[["price"]],
        predictedPrice=price.hat,

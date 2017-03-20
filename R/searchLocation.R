@@ -13,11 +13,10 @@
 #'
 #' @importFrom httr RETRY
 #' @importFrom magrittr %>%
-#' @importFrom dplyr bind_rows, mutate, select, arrange, rename, lead,
-#' mutate_at
+#' @importFrom dplyr bind_rows mutate select arrange rename lead mutate_at funs
 #'
 #' @examples
-#' searchLocation("10019")
+#' searchLocation("Peoria IL")
 #'
 searchLocation = function(location,
                           verbose = TRUE,
@@ -177,7 +176,7 @@ parseMetadata = function(metadata) {
             dplyr::bind_rows(.) %>%
             dplyr::mutate(value = as.character(value)) %>%
             dplyr::select(value, count) %>%
-            dplyr::arrange(desc(count))
+            dplyr::arrange(dplyr::desc(count))
     }
     list(num.listings = num.listings,
          geography = geography,
@@ -221,7 +220,7 @@ parseResults = function(results) {
     # make sure the vars are in the dataset
     numericList <- numericList[numericList %in% names(results)]
 
-    results <- dplyr::mutate_at(.tbl=results,.cols=numericList,funs("as.numeric"))
+    results <- dplyr::mutate_at(.tbl=results,.cols=numericList, dplyr::funs("as.numeric"))
 
     results
 }

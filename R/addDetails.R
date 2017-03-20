@@ -20,7 +20,6 @@
 #'
 #' @name addDetails
 NULL
-#>NULL
 
 ##
 ## Written by Kroeger

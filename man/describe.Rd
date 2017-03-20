@@ -20,11 +20,3 @@ showMap(content)
 Given output from \code{\link{searchLocation}}, produces
 summary charts based on metadata and results.
 }
-\examples{
-describeMetadata(content)
-
-describeResults(content)
-
-showMap(content)
-
-}

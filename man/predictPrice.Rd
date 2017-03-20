@@ -17,7 +17,7 @@ tradeoff-a higher value will increase prediction precision, but it will take lon
 
 \item{nfold}{For advanced users. The number of cross validation folds used by \code{xgboost}.}
 
-\item{nrounds}{For advanced users. The maximum number of rounds that \code{xgboost} will run 
+\item{nrounds}{For advanced users. The maximum number of rounds that \code{xgboost} will run
 when finding the optimal number of rounds through cross validation.}
 
 \item{early_stopping_rounds}{For advanced users. This parameter will cause xgboost to stop
@@ -33,9 +33,9 @@ training new models after the specified number of rounds if cross validation err
 \description{
 Given a listing ID, \code{predictPrice} uses the \code{xgboost} package to predict a price
 for that listing based on its characteristics and data from nearby listings. A listing ID can be found
-on the end of the URL for the listing on Airbnb's site. For example, a listing URL for Airbnb 
+on the end of the URL for the listing on Airbnb's site. For example, a listing URL for Airbnb
 looks like \code{https://www.airbnb.com/rooms/17634206?s=QAXAT6DD}. In this example, the listing
-ID is "17634206." Passing this value as a character string will yield a price prediction based 
+ID is "17634206." Passing this value as a character string will yield a price prediction based
 on its characteristics, implying over- or undervaluation.
 }
 \examples{

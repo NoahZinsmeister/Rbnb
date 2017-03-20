@@ -72,7 +72,7 @@ we've included a static pull of the 10019 data (`10019.RDS`) that you can load
 in like so (in this example we'll be using the static pull):
 
 ```{r eval=FALSE}
-content = data(10019, package=Rbnb)
+content = data(zip10019, package=Rbnb)
 ```
 
 And here's what we have!

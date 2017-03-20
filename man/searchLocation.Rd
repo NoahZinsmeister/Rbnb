@@ -25,6 +25,6 @@ Given an input value, lets Airbnb parse it, and return listings
 in the same region.
 }
 \examples{
-searchLocation("10019")
+searchLocation("Peoria IL")
 
 }

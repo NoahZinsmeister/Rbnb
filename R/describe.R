@@ -6,19 +6,17 @@
 #' @name describe
 #' @param content The output of \code{\link{searchLocation}}.
 #'
-#' @importFrom ggplot2 ggplot, aes, geom_bar, geom_text, geom_histogram,
-#' geom_point, labs, scale_x_continuous, scale_x_discrete, scale_color_gradient
+#' @importFrom ggplot2 ggplot aes geom_bar geom_text geom_histogram
+#' geom_point labs scale_x_continuous scale_x_discrete scale_color_gradient
 #' @importFrom ggmap ggmap
 #' @importFrom scales percent
 #' @importFrom gridExtra grid.arrange
-#' @importFrom grid textGrob, gpar, mutate_at
+#' @importFrom grid textGrob gpar
 #'
 NULL
 
 #' @rdname describe
 #' @export
-#' @examples
-#' describeMetadata(content)
 #'
 describeMetadata = function(content) {
     metadata = content$metadata
@@ -39,8 +37,6 @@ describeMetadata = function(content) {
 
 #' @rdname describe
 #' @export
-#' @examples
-#' describeResults(content)
 #'
 describeResults = function(content) {
     data = content$results$data
@@ -53,8 +49,6 @@ describeResults = function(content) {
 
 #' @rdname describe
 #' @export
-#' @examples
-#' showMap(content)
 #'
 showMap = function(content) {
     map <- ggmap::get_map(location = c(left = min(content$results$data$lng),
