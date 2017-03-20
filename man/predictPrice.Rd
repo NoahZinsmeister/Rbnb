@@ -42,7 +42,3 @@ looks like \code{https://www.airbnb.com/rooms/17634206?s=QAXAT6DD}. In this exam
 ID is "17634206." Passing this value as a character string will yield a price prediction based
 on its characteristics, implying over- or undervaluation.
 }
-\examples{
-#predictPrice(listingID="17634206")
-
-}

@@ -29,16 +29,12 @@ addDetails <- function(searchData){
 #' @description The following is a function that will take in a character vector of
 #' listing IDs and return a dataset. This function does not necessarily need to be used
 #' with \code{locationSearch}.
-#' 
+#'
 #' @param listingIDs a character vector of listing IDs. These can be found on the URLs
 #' of Airbnb listings or on the output of \code{searchLocation}.
 #' @param client.id best left alone. This is a key that authorizes requests to the Airbnb API.
-#' 
-#' @examples
-#' Example listing ID: 17634206
-#' listingDetails(listingIDs="17634206")
-#' 
-#' 
+#'
+#'
 #'
 #' @export
 #'
@@ -81,10 +77,10 @@ listingDetails <- function(listingIDs,
 #' @description The following is a function that will take in a character vector of
 #' listing IDs and return a dataset. This function does not necessarily need to be used
 #' with \code{locationSearch}.
-#' 
-#' @param searchResults a dataset of listings that is outputted from a call to 
+#'
+#' @param searchResults a dataset of listings that is outputted from a call to
 #' \code{searchLocation}.
-#' @param details a dataset of detailed listing information that is outputted from a 
+#' @param details a dataset of detailed listing information that is outputted from a
 #' call to \code{listingDetails}
 #'
 #'
@@ -127,8 +123,8 @@ mergeDetails <- function(searchResults,details){
 #' @description The following is a function that will take in a character vector of
 #' listing IDs and return a dataset. This function does not necessarily need to be used
 #' with \code{locationSearch}.
-#' 
-#' @param listingID a character vector of length one consisting of an Airbnb listing ID. 
+#'
+#' @param listingID a character vector of length one consisting of an Airbnb listing ID.
 #' These can be found on the URLs of Airbnb listings or on the output of \code{searchLocation}.
 #' @param client.id best left alone. This is a key that authorizes requests to the Airbnb API.
 #'

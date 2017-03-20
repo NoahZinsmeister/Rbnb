@@ -51,16 +51,9 @@ listing IDs and return a dataset. This function does not necessarily need to be 
 with \code{locationSearch}.
 }
 \examples{
-#content  <- searchLocation("10019")
-#searchData <- content$results$data
-#listingsWithDetails <- addDetails(searchData)
-
 Example listing ID: 17634206
 listingDetails(listingIDs="17634206")
 
-content  <- searchLocation("10019")
-searchData <- content$results$data
-listingsDetails <- listingDetails(searchData)
 
 
 }
