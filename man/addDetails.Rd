@@ -7,14 +7,30 @@
 \alias{getListingDetail}
 \title{Pull in detailed listing data to merge with location search data.}
 \usage{
-listingDetails(listingIDs, client_id = "d306zoyjsyarp7ifhu67rjxn52tv0t20")
+listingDetails(listingIDs, client.id = "d306zoyjsyarp7ifhu67rjxn52tv0t20")
 
 mergeDetails(searchResults, details)
 
-getListingDetail(listingID, client_id = "d306zoyjsyarp7ifhu67rjxn52tv0t20")
+getListingDetail(listingID, client.id = "d306zoyjsyarp7ifhu67rjxn52tv0t20")
 }
 \arguments{
+\item{listingIDs}{a character vector of listing IDs. These can be found on the URLs
+of Airbnb listings or on the output of \code{searchLocation}.}
+
+\item{client.id}{best left alone. This is a key that authorizes requests to the Airbnb API.}
+
+\item{searchResults}{a dataset of listings that is outputted from a call to 
+\code{searchLocation}.}
+
+\item{details}{a dataset of detailed listing information that is outputted from a 
+call to \code{listingDetails}}
+
+\item{listingID}{a character vector of length one consisting of an Airbnb listing ID. 
+These can be found on the URLs of Airbnb listings or on the output of \code{searchLocation}.}
+
 \item{searchData}{a dataset of listings outputted from \code{searchLocation}.}
+
+\item{client.id}{best left alone. This is a key that authorizes requests to the Airbnb API.}
 }
 \description{
 After using the \code{searchLocation}, you can add greater detail on each listing
@@ -38,5 +54,13 @@ with \code{locationSearch}.
 #content  <- searchLocation("10019")
 #searchData <- content$results$data
 #listingsWithDetails <- addDetails(searchData)
+
+Example listing ID: 17634206
+listingDetails(listingIDs="17634206")
+
+content  <- searchLocation("10019")
+searchData <- content$results$data
+listingsDetails <- listingDetails(searchData)
+
 
 }

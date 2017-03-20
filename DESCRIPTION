@@ -15,11 +15,14 @@ Description: Pulls and analyzes detailed data on Airbnb listings for
 License: GPL (>= 3)
 Encoding: UTF-8
 LazyData: true
+Depends: R (>= 2.10)
 Imports: dplyr, ggmap, ggplot2, grid, gridExtra, httr, magrittr, scales,
     xgboost
 Collate:
     Rbnb.R
     zip10019.R
+    listing.detail.R
+    trainData.R
     searchLocation.R
     addDetails.R
     predictPrice.R
