@@ -15,4 +15,10 @@ utils::globalVariables(names = c("room",
                                  "price",
                                  "lng",
                                  "lat",
-                                 "bedrooms"))
+                                 "bedrooms",
+                                 "pricing.quote.nightly.price",
+                                 "room.type",
+                                 "parsed_results",
+                                 "cumulative.count",
+                                 "previous.data.build",
+                                 "listingDetailsFromList"))

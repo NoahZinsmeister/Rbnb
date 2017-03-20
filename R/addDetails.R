@@ -8,9 +8,9 @@
 #' @param searchData a dataset of listings outputted from \code{searchLocation}.
 #'
 #' @examples
-#' content  <- searchLocation("10019")
-#' searchData <- content$results$data
-#' listingsWithDetails <- addDetails(searchData)
+#' #content  <- searchLocation("10019")
+#' #searchData <- content$results$data
+#' #listingsWithDetails <- addDetails(searchData)
 #'
 #' @export
 #'
