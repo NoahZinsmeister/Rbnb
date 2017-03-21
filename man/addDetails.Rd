@@ -4,17 +4,11 @@
 \alias{addDetails}
 \alias{addDetails}
 \alias{listingDetails}
-\alias{mergeDetails}
-\alias{getListingDetail}
-\title{Pull in detailed listing data to merge with location search data.}
+\title{Pull detailed listing data.}
 \usage{
 addDetails(searchData)
 
 listingDetails(listingIDs, client.id = "d306zoyjsyarp7ifhu67rjxn52tv0t20")
-
-mergeDetails(searchResults, details)
-
-getListingDetail(listingID, client.id = "d306zoyjsyarp7ifhu67rjxn52tv0t20")
 }
 \arguments{
 \item{searchData}{a dataset of listings outputted from \code{searchLocation}.}
@@ -23,31 +17,15 @@ getListingDetail(listingID, client.id = "d306zoyjsyarp7ifhu67rjxn52tv0t20")
 of Airbnb listings or on the output of \code{searchLocation}.}
 
 \item{client.id}{best left alone. This is a key that authorizes requests to the Airbnb API.}
-
-\item{searchResults}{a dataset of listings that is outputted from a call to
-\code{searchLocation}.}
-
-\item{details}{a dataset of detailed listing information that is outputted from a
-call to \code{listingDetails}}
-
-\item{listingID}{a character vector of length one consisting of an Airbnb listing ID.
-These can be found on the URLs of Airbnb listings or on the output of \code{searchLocation}.}
 }
 \description{
-Pull in detailed listing data to merge with location search data.
+Pull detailed listing data.
 
 After using the \code{searchLocation}, you can add greater detail on each listing
-using \code{addDetails}. It takes as an input the dataset of listings outputted from
-\code{searchLocation} and merges in details based on the listing ID. Note that this process
-is very time consuming, and so it may be unwise to pass too large of a listing dataset.
-
-The following is a function that will take in a character vector of
-listing IDs and return a dataset. This function does not necessarily need to be used
-with \code{locationSearch}.
-
-The following is a function that will take in a character vector of
-listing IDs and return a dataset. This function does not necessarily need to be used
-with \code{locationSearch}.
+(such as amenities offered) using \code{addDetails}. It takes as an input the dataset of 
+listings outputted from \code{searchLocation} and merges in details based on the listing 
+ID. Note that this process is very time consuming, and so it may be unwise to pass too 
+large of a listing dataset.
 
 The following is a function that will take in a character vector of
 listing IDs and return a dataset. This function does not necessarily need to be used

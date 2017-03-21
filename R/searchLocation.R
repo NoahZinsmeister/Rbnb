@@ -1,5 +1,5 @@
 ##
-## File written by noahwz
+## Begin code written by noahwz
 ##
 
 #' Search for Airbnb listings by location.
@@ -186,6 +186,14 @@ parseMetadata = function(metadata) {
          facets = facets)
 }
 
+##
+## End code written by noahwz
+##
+
+##
+## Begin code written by Kroeger
+##
+
 parseResults = function(results) {
     results <- dplyr::bind_rows(lapply(results, function(x) dplyr::bind_rows(as.list(unlist(x)))))
 
@@ -228,3 +236,6 @@ parseResults = function(results) {
     results
 }
 
+##
+## End code Written by Kroeger
+## 

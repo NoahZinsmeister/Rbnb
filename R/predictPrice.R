@@ -2,7 +2,7 @@
 ## File written by Kroeger
 ##
 
-#' Predict a price for an Airbnb listing using the characteristics of similar listings.
+#' Predict a price for an Airbnb listing using the characteristics of nearby listings.
 #'
 #' @description Given a listing ID, \code{predictPrice} uses the \code{xgboost} package to predict a price
 #' for that listing based on its characteristics and data from nearby listings. A listing ID can be found
@@ -44,7 +44,7 @@ predictPrice <- function(listingID,
                          nrounds=1000,
                          early_stopping_rounds=50,
                          max_depth=4,
-                         eta=0.1,
+                         eta=0.05,
                          listing.detail=NULL,
                          trainData=NULL
                           ){

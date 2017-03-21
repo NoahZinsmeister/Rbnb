@@ -2,10 +2,10 @@
 % Please edit documentation in R/predictPrice.R
 \name{predictPrice}
 \alias{predictPrice}
-\title{Predict a price for an Airbnb listing using the characteristics of similar listings.}
+\title{Predict a price for an Airbnb listing using the characteristics of nearby listings.}
 \usage{
 predictPrice(listingID, maxSample = 500, nfold = 10, nrounds = 1000,
-  early_stopping_rounds = 50, max_depth = 4, eta = 0.1,
+  early_stopping_rounds = 50, max_depth = 4, eta = 0.05,
   listing.detail = NULL, trainData = NULL)
 }
 \arguments{

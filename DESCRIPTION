@@ -23,6 +23,7 @@ Collate:
     zip10019.R
     listing.detail.R
     trainData.R
+    detailsAdded.R
     searchLocation.R
     addDetails.R
     predictPrice.R
