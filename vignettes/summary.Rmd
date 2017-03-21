@@ -9,7 +9,7 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-# Introduction {.tabset}
+# Introduction
 Rbnb is an experimental front end for the (unofficial) Airbnb API. In addition
 to pulling detailed data on Airbnb listings based on arbitrary user-defined
 locations, Rbnb also provides a variety of visual summaries of these listing.
@@ -23,8 +23,8 @@ compares to similiar listings in their area.
 - Researchers interesting in analyzing granual microdata on short-term
 rental markets.
 
-We, the authors (Alexander Kroeger and Noah Zinsmeister), are grateful to
-[The Official Unofficial Airbnb API Docs](airbnbapi.org) for documenting
+The authors are grateful to
+[The Official Unofficial Airbnb API Docs](http://airbnbapi.org/) for documenting
 much of the Airbnb API.
 
 # Installation
@@ -32,15 +32,15 @@ much of the Airbnb API.
 Before we get started, let's install Rbnb. 
 ```{r eval=FALSE}
 library(devtools)
-devtools::install_github("NoahZinsmeister/Rbnb")
+devtools::install_github("NoahZinsmeister/Rbnb", build_vignettes=TRUE)
 ```
 
 # Searching by Location
 
 The first thing you may want to do after installing Rbnb is to try searching
-for listings in your current zip code. For example, one of us lives in 10019,
-a zip that includes Hell's Kitchen and midtown Manhattan. Let's pull listings
-data for this area.
+for listings in your current zip code. For example, one of the authors lives in
+10019, a zip that includes Hell's Kitchen and midtown Manhattan. Let's pull
+listings data for this area.
 
 ```{r eval=FALSE}
 library(Rbnb)
@@ -51,8 +51,8 @@ content = Rbnb::searchLocation(location, verbose=FALSE)
 ```
 
 Note: if you are unable to access the internet or the Airbnb API specifically,
-we've included a static pull of the 10019 data (`10019.RDS`) that you can load
-in like so (in this example we'll be using the static pull):
+we've included a static pull of the 10019 data (`zip10019.rda`) that you can
+load in like so (in this example we'll be using the static pull):
 
 ```{r}
 data("zip10019", package="Rbnb")
@@ -150,5 +150,6 @@ xgboost!
 data("trainData", package="Rbnb")
 data("listing.detail", package="Rbnb")
 
-Rbnb::predictPrice("12170773", maxSample = 400, listing.detail = listing.detail, trainData = trainData)
+Rbnb::predictPrice("12170773", maxSample = 400,
+                   listing.detail = listing.detail, trainData = trainData)
 ```
