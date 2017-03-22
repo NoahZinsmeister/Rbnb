@@ -4,7 +4,7 @@
 
 #' Predict a price for an Airbnb listing using the characteristics of nearby listings.
 #'
-#' @description Given a listing ID, \code{predictPrice} uses the \code{xgboost} package to predict a price
+#' @description Given a listing ID, \code{predictPrice} uses the \code{\link{xgboost}} package to predict a price
 #' for that listing based on its characteristics and data from nearby listings. A listing ID can be found
 #' on the end of the URL for the listing on Airbnb's site. For example, a listing URL for Airbnb
 #' looks like \code{https://www.airbnb.com/rooms/17634206?s=QAXAT6DD}. In this example, the listing
@@ -15,20 +15,24 @@
 #' URL. This should be passed as a string (a character vector of length one).
 #' @param maxSample The maximum number of nearby listings on which to base the price prediction. There is a
 #' tradeoff-a higher value will increase prediction precision, but it will take longer to run.
-#' @param nfold For advanced users. The number of cross validation folds used by \code{xgboost}.
-#' @param nrounds For advanced users. The maximum number of rounds that \code{xgboost} will run
+#' @param nfold For advanced users. The number of cross validation folds used by \code{\link{xgboost}}.
+#' @param nrounds For advanced users. The maximum number of rounds that \code{\link{xgboost}} will run
 #' when finding the optimal number of rounds through cross validation.
 #' @param early_stopping_rounds For advanced users. This parameter will cause xgboost to stop
 #' training new models after the specified number of rounds if cross validation error does not improve.
-#' @param max_depth For advanced users. The maximum depth of a tree fitted by \code{xgboost}.
+#' @param max_depth For advanced users. The maximum depth of a tree fitted by \code{\link{xgboost}}.
 #' @param eta For advanced users. The shrinkage parameter used to control the learning rate for
 #' \code{xgboost}.
 #' @param listing.detail a dataset for the particular listing if you've already pulled it using
-#' \code{listingDetails(listingID)}.
+#' \code{\link{listingDetails}}.
 #' @param trainData a dataset consisting of listings with details if you've already pulled it
-#' using \code{searchLocation()} and \code{addDetails()}.
+#' using \code{\link{searchLocation}} and \code{\link{addDetails}}.
 #'
-#'
+#' @examples
+#' data("trainData", package="Rbnb")
+#' data("listing.detail", package="Rbnb")
+#' price.prediction <- Rbnb::predictPrice("12170773",listing.detail = listing.detail, trainData = trainData)
+#' 
 #' @export
 #'
 #' @importFrom xgboost xgb.DMatrix xgb.cv xgb.train

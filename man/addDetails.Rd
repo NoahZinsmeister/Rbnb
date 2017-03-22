@@ -31,3 +31,10 @@ The following is a function that will take in a character vector of
 listing IDs and return a dataset. This function does not necessarily need to be used
 with \code{locationSearch}.
 }
+\examples{
+\dontrun{
+listingData <- searchLocation("10019")$results$data
+addDetails(listingdata[1:2])
+}
+
+}
