@@ -21,22 +21,24 @@ NULL
 
 #' @rdname describe
 #' @export
+#' @param facet Which facet you'd like to plot. One of c("bedrooms", "beds",
+#' "bathrooms", "room.type", "hosting.amenities").
 #'
-describeMetadata = function(content) {
+describeMetadata = function(content, facet = "bedrooms") {
     metadata = content$metadata
 
     # messy plotting
     common.aes = ggplot2::aes(x = value, y = count)
     common.bar = ggplot2::geom_bar(stat = "identity", fill = "#99ccff")
     common.percent.lab = ggplot2::geom_text(ggplot2::aes(label = scales::percent(round(count/metadata$num.listings, 2))), vjust = -.2)
-    p1 = ggplot(metadata$facets$bedrooms, common.aes) + common.bar + common.percent.lab + ggplot2::labs(title = "Bedrooms", x = "", y = "Count") + ggplot2::scale_x_continuous(breaks = metadata$facets$bedrooms$value)
-    p2 = ggplot(metadata$facets$beds, common.aes) + common.bar + common.percent.lab + ggplot2::labs(title = "Beds", x = "", y = "Count") + ggplot2::scale_x_continuous(breaks = metadata$facets$beds$value)
-    p3 = ggplot(metadata$facets$bathrooms, common.aes) + common.bar + common.percent.lab + ggplot2::labs(title = "Bathrooms", x = "", y = "Count") + ggplot2::scale_x_continuous(breaks = metadata$facets$bathrooms$value)
-    p4 = ggplot(metadata$facets$room_type, common.aes) + common.bar + common.percent.lab + ggplot2::labs(title = "Room Type", x = "", y = "Count") + ggplot2::scale_x_discrete(limits = metadata$facets$room_type$value)
-    p5 = ggplot(metadata$facets$top_amenities, common.aes) + common.bar + common.percent.lab + ggplot2::labs(title = "Top Amenities", x = "", y = "Count") + ggplot2::scale_x_discrete(limits = metadata$facets$top_amenities$value)
-    p6 = ggplot(metadata$facets$hosting_amenity_ids, aes(x = value, weight = (count/metadata$num.listings)*100)) + ggplot2::geom_bar(fill = "#99ccff") + ggplot2::labs(title = "All Amenities", x = "", y = "Percent") + ggplot2::scale_x_discrete(limits = metadata$facets$hosting_amenity_ids$value) + ggplot2::coord_flip()
-    gridExtra::grid.arrange(p1, p2, p3, p4, p5, p6, nrow = 2, ncol = 3, top = grid::textGrob(paste0("Characteristics of the ", metadata$num.listings, " Listings in '", content$passed.location, "'"), gp = grid::gpar(fontsize = 20)))
-    #ggplot2::ggsave(file = paste0(metadata$passed.location, ".pdf"), p, width = 16, height = 9)
+
+    switch(facet,
+           bedrooms = ggplot(metadata$facets$bedrooms, common.aes) + common.bar + common.percent.lab + ggplot2::labs(title = "Bedrooms", x = "", y = "Count") + ggplot2::scale_x_continuous(breaks = metadata$facets$bedrooms$value),
+           beds = ggplot(metadata$facets$beds, common.aes) + common.bar + common.percent.lab + ggplot2::labs(title = "Beds", x = "", y = "Count") + ggplot2::scale_x_continuous(breaks = metadata$facets$beds$value),
+           bathrooms = ggplot(metadata$facets$bathrooms, common.aes) + common.bar + common.percent.lab + ggplot2::labs(title = "Bathrooms", x = "", y = "Count") + ggplot2::scale_x_continuous(breaks = metadata$facets$bathrooms$value),
+           room.type = ggplot(metadata$facets$room_type, common.aes) + common.bar + common.percent.lab + ggplot2::labs(title = "Room Type", x = "", y = "Count") + ggplot2::scale_x_discrete(limits = metadata$facets$room_type$value),
+           top.amenities = ggplot(metadata$facets$top_amenities, common.aes) + common.bar + common.percent.lab + ggplot2::labs(title = "Top Amenities", x = "", y = "Count") + ggplot2::scale_x_discrete(limits = metadata$facets$top_amenities$value),
+           hosting.amenitites = ggplot(metadata$facets$hosting_amenity_ids, aes(x = value, weight = (count/metadata$num.listings)*100)) + ggplot2::geom_bar(fill = "#99ccff") + ggplot2::labs(title = "All Amenities", x = "", y = "Percent") + ggplot2::scale_x_discrete(limits = metadata$facets$hosting_amenity_ids$value) + ggplot2::coord_flip())
 }
 
 #' @rdname describe

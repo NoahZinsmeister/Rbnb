@@ -7,7 +7,7 @@
 \alias{showMap}
 \title{Describe characteristics of Airbnb listings.}
 \usage{
-describeMetadata(content)
+describeMetadata(content, facet = "bedrooms")
 
 describeResults(content)
 
@@ -15,6 +15,9 @@ showMap(content)
 }
 \arguments{
 \item{content}{The output of \code{\link{searchLocation}}.}
+
+\item{facet}{Which facet you'd like to plot. One of c("bedrooms", "beds",
+"bathrooms", "room.type", "hosting.amenities").}
 }
 \description{
 Given output from \code{\link{searchLocation}}, produces

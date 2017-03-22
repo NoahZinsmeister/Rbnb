@@ -99,7 +99,7 @@ content$metadata$facets$bedrooms
 We can use `describeMetadata` for a better look at some of these facets.
 
 ```{r}
-Rbnb::describeMetadata(content)
+Rbnb::describeMetadata(content, facet = "bedrooms")
 ```
 
 If we only want to take a look at this metadata without going through the
