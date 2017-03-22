@@ -22,9 +22,9 @@ of Airbnb listings or on the output of \code{\link{searchLocation}}.}
 Pull detailed listing data.
 
 After using the \code{\link{searchLocation}}, you can add greater detail on each listing
-(such as amenities offered) using \code{addDetails}. It takes as an input the dataset of 
-listings outputted from \code{\link{searchLocation}} and merges in details based on the listing 
-ID. Note that this process is very time consuming, and so it may be unwise to pass too 
+(such as amenities offered) using \code{addDetails}. It takes as an input the dataset of
+listings outputted from \code{\link{searchLocation}} and merges in details based on the listing
+ID. Note that this process is very time consuming, and so it may be unwise to pass too
 large of a listing dataset.
 
 \code{listingDetails} is a function that will take in a character vector of
@@ -34,12 +34,12 @@ with \code{\link{searchLocation}}.
 \examples{
 \dontrun{
 listingData <- searchLocation("10019")$results$data
-addDetails(listingdata[1:2])
+addDetails(listingData[1:5,])
 }
 
 \dontrun{
 listingData <- searchLocation("10019")$results$data
-listing.details <- listingDetails(listingdata$id[1:2])
+listing.details <- listingDetails(listingData$id[1:5])
 }
 
 }

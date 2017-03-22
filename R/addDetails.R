@@ -18,17 +18,17 @@ NULL
 #' @rdname addDetails
 #'
 #' @description After using the \code{\link{searchLocation}}, you can add greater detail on each listing
-#' (such as amenities offered) using \code{addDetails}. It takes as an input the dataset of 
-#' listings outputted from \code{\link{searchLocation}} and merges in details based on the listing 
-#' ID. Note that this process is very time consuming, and so it may be unwise to pass too 
+#' (such as amenities offered) using \code{addDetails}. It takes as an input the dataset of
+#' listings outputted from \code{\link{searchLocation}} and merges in details based on the listing
+#' ID. Note that this process is very time consuming, and so it may be unwise to pass too
 #' large of a listing dataset.
 #'
 #' @param searchData a dataset of listings outputted from \code{searchLocation}.
-#' 
-#' @examples 
+#'
+#' @examples
 #' \dontrun{
 #' listingData <- searchLocation("10019")$results$data
-#' addDetails(listingdata[1:2])
+#' addDetails(listingData[1:5,])
 #' }
 #'
 #' @export
@@ -47,11 +47,11 @@ addDetails <- function(searchData){
 #' @param listingIDs a character vector of listing IDs. These can be found on the URLs
 #' of Airbnb listings or on the output of \code{\link{searchLocation}}.
 #' @param client.id best left alone. This is a key that authorizes requests to the Airbnb API.
-#' 
+#'
 #' @examples
 #' \dontrun{
 #' listingData <- searchLocation("10019")$results$data
-#' listing.details <- listingDetails(listingdata$id[1:2])
+#' listing.details <- listingDetails(listingData$id[1:5])
 #' }
 #'
 #' @importFrom magrittr %>%
@@ -117,7 +117,7 @@ mergeDetails <- function(searchResults,details){
       i=="reviews.count" |
       i=="room.type.category" |
       i=="star.rating" |
-      i=="user.id" | 
+      i=="user.id" |
       i=="neighborhood"
     ){
       searchResults[i] <<- NULL
