@@ -93,13 +93,20 @@ on Google Maps.
 
 The facets contain various distributional statistics, e.g.:
 ```{r}
-content$metadata$facets$bedrooms
+library(knitr)
+kable(content$metadata$facets$bedrooms[1:5,])
 ```
 
-We can use `describeMetadata` for a better look at some of these facets.
+We can use `describeMetadata` for a better look at some of these facets. For
+example, we can look at the distribution of bathrooms.
 
-```{r}
-Rbnb::describeMetadata(content, facet = "bedrooms")
+```{r fig.width=7, fig.height=5}
+Rbnb::describeMetadata(content, facet = "bathrooms")
+```
+
+Or the 
+```{r fig.width=7, fig.height=5}
+Rbnb::describeMetadata(content, facet = "room.type")
 ```
 
 If we only want to take a look at this metadata without going through the
@@ -112,23 +119,23 @@ Rbnb::searchLocation(location, metadata.only=TRUE, verbose=FALSE)
 ### Results
 
 Here's a look at the actual dataframe (tibble) we've pulled.
-```{r}
-class(content$results$data)
+```{r kable}
+kable(content$results$data[1:5,c("name", "bedrooms", "neighborhood", "primary.host.first.name")])
 ```
 
 This dataframe contains **`r content$metadata$num.listings`** listings related
 to your search term '**`r as.character(content$passed.location)`**'.
 
-We can use `describeResults` to plot some interesting aspects of the data.
-
-```{r}
+We can use `describeResults` to plot the distribution of prices across
+room types.
+```{r fig.width=7, fig.height=5}
 Rbnb::describeResults(content)
 ```
 
 And if we want to plot the location of listings on a map, we can use `showMap`.
 
-```{r}
-Rbnb::showMap(content)
+```{r fig.width=7, fig.height=5}
+suppressWarnings(Rbnb::showMap(content))
 ```
 
 ## Listing Details

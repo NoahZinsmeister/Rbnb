@@ -63,7 +63,7 @@ showMap = function(content) {
                                        top = max(content$results$data$lat)),
                           maptype = "roadmap", source = "google", color = "bw", messaging = FALSE)
     ggmap::ggmap(map) +
-        ggplot2::geom_point(data = content$results$data, ggplot2::aes(x = lng, y = lat, size = bedrooms, color = pricing.quote.nightly.price), alpha = .75) +
+        ggplot2::geom_point(data = content$results$data, ggplot2::aes(x = lng, y = lat, size = bedrooms, color = pricing.quote.nightly.price), alpha = .75, na.rm = TRUE) +
         ggplot2::scale_color_gradient(low = "#99ccff", high = "#000099", guide = "colorbar")
 }
 
