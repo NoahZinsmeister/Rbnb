@@ -22,9 +22,10 @@
 #' training new models after the specified number of rounds if cross validation error does not improve.
 #' @param max_depth For advanced users. The maximum depth of a tree fitted by \code{\link{xgboost}}.
 #' @param eta For advanced users. The shrinkage parameter used to control the learning rate for
-#' \code{xgboost}.
+#' \code{\link{xgboost}}.
 #' @param listing.detail a dataset for the particular listing if you've already pulled it using
-#' \code{\link{listingDetails}}.
+#' \code{\link{listingDetails}}. Note that this should be a dataset of only one listing (as in 
+#' \code{\link{listing.detail}}).
 #' @param trainData a dataset consisting of listings with details if you've already pulled it
 #' using \code{\link{searchLocation}} and \code{\link{addDetails}}.
 #'
