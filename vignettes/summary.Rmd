@@ -120,7 +120,7 @@ Rbnb::searchLocation(location, metadata.only=TRUE, verbose=FALSE)
 
 Here's a look at the actual dataframe (tibble) we've pulled.
 ```{r kable}
-kable(content$results$data[1:5,c("name", "bedrooms", "neighborhood", "primary.host.first.name")])
+knitr::kable(content$results$data[1:5,c("name", "bedrooms", "neighborhood", "primary.host.first.name")])
 ```
 
 This dataframe contains **`r content$metadata$num.listings`** listings related
@@ -170,6 +170,7 @@ to the first 20 observations of the static `content$results$data.` The dataset, 
 variables, is quite wide. 33 of these variables are indicators for various amenities.
 ```{r}
 data(detailsAdded,package="Rbnb")
+knitr::kable(detailsAdded[1:5,c("name","neighborhood","amenity.Wireless.Internet")])
 dim(detailsAdded)
 sum(grepl("^amenity.",names(detailsAdded)))
 ```
@@ -189,10 +190,19 @@ prediction!
 The function will return a list containing the listing ID of interest, the current price,
 a predicted price, the training dataset used, and the data for the listing of interest.
 
+
 One item to note is that pulling listing details can be quite time consuming. For this 
 reason, there is a parameter in `pricePrediction` called `maxSample` that allows
-you to limit the number of nearby listings for which details are pulled in. Since here 
-are using static data instead of the API, `maxSample` is omitted.
+you to limit the number of nearby listings for which details are pulled in. Below
+is a sample call to `predictPrice`.
+
+```{r eval=FALSE}
+price.prediction <- Rbnb::predictPrice(listingID="12170773",maxSample=500)
+```
+
+Here is `predictPrice` using static data instead of the API. Since no data
+is being pulled, `maxSample` is omitted. Note also your ability to pass xgboost 
+parameters.
 
 ```{r}
 data("trainData", package="Rbnb")
