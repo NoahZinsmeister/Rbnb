@@ -2,9 +2,9 @@
 ## File written by Kroeger
 ##
 
-#' Detailed listing data from \code{\link{listingDetails}("12170773")}
+#' listing.detail
 #'
-#' Description.
+#' Detailed listing data from \code{\link{listingDetails}("12170773")}
 #' @name listing.detail
 #' @docType data
 #' @keywords data

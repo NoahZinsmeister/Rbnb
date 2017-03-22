@@ -4,15 +4,16 @@
 
 #' Search for Airbnb listings by location.
 #'
-#' @description Given an input value, lets Airbnb parse it, and return listings
-#' in the same region.
+#' @description Lets Airbnb parse a given input location and return listings
+#' in that location.
 #'
-#' @param location a string representing the desired search region.
+#' @param location a character string representing the desired search region.
 #' @param verbose a boolean indicating whether or not to print status updates.
 #' @param metadata.only a boolean indicating whether or not to return just
 #' metadata (no listings).
-#' @param client.id a string represting your own Airbnb API key.
-#' @return named list containing the serach output.
+#' @param client.id a string represting your own Airbnb API key. Ours has been
+#' provided for convenience.
+#' @return named list containing various search outputs.
 #' @export
 #'
 #' @importFrom httr RETRY
@@ -20,7 +21,7 @@
 #' @importFrom dplyr bind_rows mutate select arrange rename lead mutate_at funs
 #'
 #' @examples
-#' searchLocation("Peoria IL")
+#' searchLocation("IRS Regional Examination Center, Peoria, IL")
 #'
 searchLocation = function(location,
                           verbose = TRUE,
@@ -238,4 +239,4 @@ parseResults = function(results) {
 
 ##
 ## End code Written by Kroeger
-## 
+##

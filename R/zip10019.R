@@ -1,6 +1,6 @@
-#' Location data from \code{\link{searchLocation}("10019")}
+#' zip10019
 #'
-#' Description.
+#' Location data from \code{\link{searchLocation}("10019")}
 #' @name zip10019
 #' @docType data
 #' @keywords data

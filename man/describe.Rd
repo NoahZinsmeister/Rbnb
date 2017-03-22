@@ -23,3 +23,12 @@ showMap(content)
 Given output from \code{\link{searchLocation}}, produces
 summary charts based on metadata and results.
 }
+\examples{
+data("zip10019", package = "Rbnb")
+describeMetadata(zip10019)
+
+describeResults(zip10019)
+
+showMap(zip10019)
+
+}
