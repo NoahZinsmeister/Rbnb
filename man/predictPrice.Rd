@@ -26,10 +26,11 @@ training new models after the specified number of rounds if cross validation err
 \item{max_depth}{For advanced users. The maximum depth of a tree fitted by \code{\link{xgboost}}.}
 
 \item{eta}{For advanced users. The shrinkage parameter used to control the learning rate for
-\code{xgboost}.}
+\code{\link{xgboost}}.}
 
 \item{listing.detail}{a dataset for the particular listing if you've already pulled it using
-\code{\link{listingDetails}}.}
+\code{\link{listingDetails}}. Note that this should be a dataset of only one listing (as in 
+\code{\link{listing.detail}}).}
 
 \item{trainData}{a dataset consisting of listings with details if you've already pulled it
 using \code{\link{searchLocation}} and \code{\link{addDetails}}.}
