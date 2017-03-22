@@ -105,7 +105,8 @@ mergeDetails <- function(searchResults,details){
       i=="reviews.count" |
       i=="room.type.category" |
       i=="star.rating" |
-      i=="user.id"
+      i=="user.id" | 
+      i=="neighborhood"
     ){
       searchResults[i] <<- NULL
     }
