@@ -3,7 +3,8 @@
 \docType{data}
 \name{detailsAdded}
 \alias{detailsAdded}
-\title{Output of \code{\link{addDetails}} called with data from \code{\link{searchLocation}}}
+\title{Listing data from \code{searchLocation} with more detailed 
+information merged in using \code{addDetails}.}
 \description{
 Description.
 }
