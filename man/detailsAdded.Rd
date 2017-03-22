@@ -3,9 +3,9 @@
 \docType{data}
 \name{detailsAdded}
 \alias{detailsAdded}
-\title{Listing data from \code{searchLocation} with more detailed 
-information merged in using \code{addDetails}.}
+\title{detailsAdded}
 \description{
-Description.
+#' Listing data from \code{searchLocation} with more detailed
+information merged in using \code{addDetails}.
 }
 \keyword{data}

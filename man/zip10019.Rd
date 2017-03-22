@@ -3,8 +3,8 @@
 \docType{data}
 \name{zip10019}
 \alias{zip10019}
-\title{Location data from \code{\link{searchLocation}("10019")}}
+\title{zip10019}
 \description{
-Description.
+Location data from \code{\link{searchLocation}("10019")}
 }
 \keyword{data}

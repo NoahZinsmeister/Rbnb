@@ -15,30 +15,36 @@ URL. This should be passed as a string (a character vector of length one).}
 \item{maxSample}{The maximum number of nearby listings on which to base the price prediction. There is a
 tradeoff-a higher value will increase prediction precision, but it will take longer to run.}
 
-\item{nfold}{For advanced users. The number of cross validation folds used by \code{xgboost}.}
+\item{nfold}{For advanced users. The number of cross validation folds used by \code{\link{xgboost}}.}
 
-\item{nrounds}{For advanced users. The maximum number of rounds that \code{xgboost} will run
+\item{nrounds}{For advanced users. The maximum number of rounds that \code{\link{xgboost}} will run
 when finding the optimal number of rounds through cross validation.}
 
 \item{early_stopping_rounds}{For advanced users. This parameter will cause xgboost to stop
 training new models after the specified number of rounds if cross validation error does not improve.}
 
-\item{max_depth}{For advanced users. The maximum depth of a tree fitted by \code{xgboost}.}
+\item{max_depth}{For advanced users. The maximum depth of a tree fitted by \code{\link{xgboost}}.}
 
 \item{eta}{For advanced users. The shrinkage parameter used to control the learning rate for
 \code{xgboost}.}
 
 \item{listing.detail}{a dataset for the particular listing if you've already pulled it using
-\code{listingDetails(listingID)}.}
+\code{\link{listingDetails}}.}
 
 \item{trainData}{a dataset consisting of listings with details if you've already pulled it
-using \code{searchLocation()} and \code{addDetails()}.}
+using \code{\link{searchLocation}} and \code{\link{addDetails}}.}
 }
 \description{
-Given a listing ID, \code{predictPrice} uses the \code{xgboost} package to predict a price
+Given a listing ID, \code{predictPrice} uses the \code{\link{xgboost}} package to predict a price
 for that listing based on its characteristics and data from nearby listings. A listing ID can be found
 on the end of the URL for the listing on Airbnb's site. For example, a listing URL for Airbnb
 looks like \code{https://www.airbnb.com/rooms/17634206?s=QAXAT6DD}. In this example, the listing
 ID is "17634206." Passing this value as a character string will yield a price prediction based
 on its characteristics, implying over- or undervaluation.
+}
+\examples{
+data("trainData", package="Rbnb")
+data("listing.detail", package="Rbnb")
+price.prediction <- Rbnb::predictPrice("12170773",listing.detail = listing.detail, trainData = trainData)
+
 }

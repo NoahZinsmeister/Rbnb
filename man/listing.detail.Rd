@@ -3,8 +3,8 @@
 \docType{data}
 \name{listing.detail}
 \alias{listing.detail}
-\title{Detailed listing data from \code{\link{listingDetails}("12170773")}}
+\title{listing.detail}
 \description{
-Description.
+Detailed listing data from \code{\link{listingDetails}("12170773")}
 }
 \keyword{data}

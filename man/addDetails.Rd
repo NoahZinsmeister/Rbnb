@@ -14,27 +14,32 @@ listingDetails(listingIDs, client.id = "d306zoyjsyarp7ifhu67rjxn52tv0t20")
 \item{searchData}{a dataset of listings outputted from \code{searchLocation}.}
 
 \item{listingIDs}{a character vector of listing IDs. These can be found on the URLs
-of Airbnb listings or on the output of \code{searchLocation}.}
+of Airbnb listings or on the output of \code{\link{searchLocation}}.}
 
 \item{client.id}{best left alone. This is a key that authorizes requests to the Airbnb API.}
 }
 \description{
 Pull detailed listing data.
 
-After using the \code{searchLocation}, you can add greater detail on each listing
+After using the \code{\link{searchLocation}}, you can add greater detail on each listing
 (such as amenities offered) using \code{addDetails}. It takes as an input the dataset of 
-listings outputted from \code{searchLocation} and merges in details based on the listing 
+listings outputted from \code{\link{searchLocation}} and merges in details based on the listing 
 ID. Note that this process is very time consuming, and so it may be unwise to pass too 
 large of a listing dataset.
 
-The following is a function that will take in a character vector of
+\code{listingDetails} is a function that will take in a character vector of
 listing IDs and return a dataset. This function does not necessarily need to be used
-with \code{locationSearch}.
+with \code{\link{searchLocation}}.
 }
 \examples{
 \dontrun{
 listingData <- searchLocation("10019")$results$data
 addDetails(listingdata[1:2])
+}
+
+\dontrun{
+listingData <- searchLocation("10019")$results$data
+listing.details <- listingDetails(listingdata$id[1:2])
 }
 
 }
