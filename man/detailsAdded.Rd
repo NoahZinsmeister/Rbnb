@@ -3,7 +3,7 @@
 \docType{data}
 \name{detailsAdded}
 \alias{detailsAdded}
-\title{A sample listings dataset with listing details merged in.}
+\title{Output of \code{\link{addDetails}} called with data from \code{\link{searchLocation}}}
 \description{
 Description.
 }
