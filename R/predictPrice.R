@@ -31,7 +31,8 @@
 #' @examples
 #' data("trainData", package="Rbnb")
 #' data("listing.detail", package="Rbnb")
-#' price.prediction <- Rbnb::predictPrice("12170773",listing.detail = listing.detail, trainData = trainData)
+#' price.prediction <- Rbnb::predictPrice("12170773",
+#'        listing.detail = listing.detail, trainData = trainData[1:100])
 #' 
 #' @export
 #'
