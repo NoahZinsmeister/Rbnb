@@ -135,7 +135,7 @@ Rbnb::describeResults(content)
 And if we want to plot the location of listings on a map, we can use `showMap`.
 
 ```{r fig.width=7, fig.height=5}
-suppressWarnings(Rbnb::showMap(content))
+Rbnb::showMap(content)
 ```
 
 ## Listing Details
