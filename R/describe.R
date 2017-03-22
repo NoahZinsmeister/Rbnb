@@ -23,6 +23,9 @@ NULL
 #' @export
 #' @param facet Which facet you'd like to plot. One of c("bedrooms", "beds",
 #' "bathrooms", "room.type", "hosting.amenities").
+#' @examples
+#' data("zip10019", package = "Rbnb")
+#' describeMetadata(zip10019)
 #'
 describeMetadata = function(content, facet = "bedrooms") {
     metadata = content$metadata
@@ -43,6 +46,8 @@ describeMetadata = function(content, facet = "bedrooms") {
 
 #' @rdname describe
 #' @export
+#' @examples
+#' describeResults(zip10019)
 #'
 describeResults = function(content) {
     data = content$results$data
@@ -55,6 +60,8 @@ describeResults = function(content) {
 
 #' @rdname describe
 #' @export
+#' @examples
+#' showMap(zip10019)
 #'
 showMap = function(content) {
     map <- ggmap::get_map(location = c(left = min(content$results$data$lng),

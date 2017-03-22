@@ -8,23 +8,24 @@ searchLocation(location, verbose = TRUE, metadata.only = FALSE,
   client.id = "d306zoyjsyarp7ifhu67rjxn52tv0t20")
 }
 \arguments{
-\item{location}{a string representing the desired search region.}
+\item{location}{a character string representing the desired search region.}
 
 \item{verbose}{a boolean indicating whether or not to print status updates.}
 
 \item{metadata.only}{a boolean indicating whether or not to return just
 metadata (no listings).}
 
-\item{client.id}{a string represting your own Airbnb API key.}
+\item{client.id}{a string represting your own Airbnb API key. Ours has been
+provided for convenience.}
 }
 \value{
-named list containing the serach output.
+named list containing various search outputs.
 }
 \description{
-Given an input value, lets Airbnb parse it, and return listings
-in the same region.
+Lets Airbnb parse a given input location and return listings
+in that location.
 }
 \examples{
-searchLocation("Peoria IL")
+searchLocation("IRS Regional Examination Center, Peoria, IL")
 
 }
