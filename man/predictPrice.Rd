@@ -29,7 +29,7 @@ training new models after the specified number of rounds if cross validation err
 \code{\link{xgboost}}.}
 
 \item{listing.detail}{a dataset for the particular listing if you've already pulled it using
-\code{\link{listingDetails}}. Note that this should be a dataset of only one listing (as in 
+\code{\link{listingDetails}}. Note that this should be a dataset of only one listing (as in
 \code{\link{listing.detail}}).}
 
 \item{trainData}{a dataset consisting of listings with details if you've already pulled it

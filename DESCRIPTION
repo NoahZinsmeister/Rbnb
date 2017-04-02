@@ -17,7 +17,7 @@ Encoding: UTF-8
 LazyData: true
 Depends: R (>= 2.10)
 Imports: dplyr, ggmap, ggplot2, grid, gridExtra, httr, magrittr, scales,
-    xgboost
+    curl, jsonlite, xgboost
 Collate:
     Rbnb.R
     zip10019.R

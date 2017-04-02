@@ -12,12 +12,14 @@
 #' @return named list containing various search outputs.
 #' @export
 #'
-#' @importFrom httr RETRY
+#' @importFrom curl curl_fetch_memory new_pool curl_fetch_multi multi_run
+#' @importFrom jsonlite fromJSON
 #' @importFrom magrittr %>%
 #' @importFrom dplyr bind_rows mutate select arrange rename lead mutate_at funs
 #'
 #' @examples
 #' searchLocation("IRS Regional Examination Center, Peoria, IL")
+#'
 #'
 searchLocation = function(location,
                           verbose = TRUE,
@@ -34,7 +36,7 @@ searchLocation = function(location,
                   locale = "en-US",
                   currency = "USD",
                   price_min = 0,
-                  price_max = 2500,
+                  price_max = 5000,
                   sort = 1,
                   "_format" = "for_search_results",
                   "_limit" = 1,
@@ -42,39 +44,36 @@ searchLocation = function(location,
     endpoint.url = "https://api.airbnb.com/v2/search_results"
 
     # make an exploratory call, only return 1 listing
-    request = httr::RETRY("GET", url = constructGET(endpoint.url, params))
-    checkRequest(request)
-    primary.results = content(request, as = "parsed")
+    call = curl::curl_fetch_memory(constructGET(endpoint.url, params)) %>%
+        parseRequest(subset="both")
 
-    # check number of listings returned for the location
-    num.listings = primary.results$metadata$listings_count
-
-    # if 0 listings, stop
-    if (num.listings == 0)
+    # if 0 listings returned, stop
+    num.listings = call$metadata$num.listings
+    if (call$metadata$num.listings == 0)
         stop("No results found. Try a different search term.")
 
     if (metadata.only)
         return(list(passed.location = location,
-                    metadata = parseMetadata(primary.results$metadata)))
+                    metadata = call$metadata))
 
-    # else, figure out how many max prices cutoffs we need to get x or fewer listings between cutoffs
-    # NOTE: this is because if num.listings is over 1000, it means that there are more results
-    # than we're able to get by manipulating limit and offset, hence using price cutoffs
+    # else, figure out how many max prices cutoffs we need to get x or fewer
+    # listings between cutoffs NOTE: this is because if num.listings is over
+    # 1000, it means that there are more results than we're able to get by
+    # manipulating limit and offset, hence using price cutoffs
     getNumListings = function(p.low, p.high) {
         # gets number of listings in [p.low, p.high-1]
         params$price_min = p.low
         params$price_max = p.high-1
-        request = httr::RETRY("GET", url = constructGET(endpoint.url, params))
-        checkRequest(request)
-        parsed.results = content(request, as = "parsed")
+        request = curl_fetch_memory(constructGET(endpoint.url, params)) %>%
+            parseRequest(subset="metadata")
         # return number of listings returned
-        parsed.results$metadata$listings_count
+        request$num.listings
     }
 
-    # starting cutoffs [0-2500]
-    price.cutoffs = c(0, 2501)
+    # starting cutoffs [0-price_max]
+    price.cutoffs = c(0, params$price_max+1)
 
-    # make cutoffs more granular until we have bins of <300 listings
+    # make cutoffs more granular until we have bins of <=300 listings
     while (any(num.listings > 300)) {
         # between which cutoffs are there most listings?
         max.index = which.max(num.listings)
@@ -83,7 +82,7 @@ searchLocation = function(location,
         if (new.cutoff %in% price.cutoffs)
             stop("Couldn't find sufficiently granular price cutoffs to return all results.")
         # insert new cutoff
-        price.cutoffs = append(price.cutoffs, new.cutoff, after = max.index)
+        price.cutoffs = append(price.cutoffs, new.cutoff, after=max.index)
         # add in number of listings for new cutoffs
         num.listings = append(num.listings, c(getNumListings(price.cutoffs[max.index], price.cutoffs[max.index+1]),
                                               getNumListings(price.cutoffs[max.index+1], price.cutoffs[max.index+2])),
@@ -92,39 +91,41 @@ searchLocation = function(location,
         num.listings = num.listings[-max.index]
     }
 
-    #if >2000 listings, warn
+    # possible to get cutoffs with 0 listings in between, fix that
+    while (any(num.listings == 0)) {
+        zero.index = which.min(num.listings)
+        num.listings = num.listings[-zero.index]
+        price.cutoffs = price.cutoffs[-zero.index]
+    }
+
+    # if >2000 listings, warn
     if (sum(num.listings) > 2000) {
-        warning(paste0(sum(num.listings), " listings found. Performance may be impaired."), immediate. = TRUE)
+        warning(paste0(sum(num.listings), " listings found. Performance may be impaired. Retrieving data..."),
+                immediate.=TRUE)
     } else {
         if (verbose) print(paste0(sum(num.listings), " listings found! Retrieving data..."))
     }
 
     # for every pair of price cutoffs, load the data in, given max chunk size of 50
-    all.results = list()
     params$`_limit` = 50
-    for (i in 1:length(num.listings)) {
-        if (num.listings[i] == 0) next
-        if (verbose) print(paste0("Batch ", i, " of ", length(num.listings)))
+    offsets = lapply(num.listings, function(x) seq(0, x-1, 50))
+    pool <- curl::new_pool()
+    out = NULL
+    for (i in 1:length(offsets)) {
         params$price_min = price.cutoffs[i]
         params$price_max = price.cutoffs[i+1]-1
-
-        # make the necessary calls, saving results only (not metadata) at each step
-        repeat {
-            request = httr::RETRY("GET", url = constructGET(endpoint.url, params))
-            checkRequest(request)
-            parsed.results = content(request, as = "parsed")
-            all.results = c(all.results, parsed.results$search_results)
-            params$`_offset` = parsed.results$metadata$pagination$next_offset
-            if (parsed.results$metadata$pagination$result_count < 50) break
+        for (j in offsets[[i]]) {
+            params$`_offset` = j
+            curl::curl_fetch_multi(constructGET(endpoint.url, params), done=function(x) out<<-bind_rows(out, parseRequest(x)), pool=pool)
         }
-        params$`_offset` = 0
     }
+    outcome = curl::multi_run(pool=pool)
 
-    # return the list of all results, metadata from last call, and passed location
+    # return the list of all results, metadata from first call (- the num.listings), and passed location
+    call$metadata$num.listings = NULL
     list(passed.location = location,
-         metadata = parseMetadata(primary.results$metadata),
-         results = list(num.listings = length(all.results),
-                        data = parseResults(all.results)))
+         metadata = call$metadata,
+         results = out)
 }
 
 constructGET = function(base.url, parameters) {
@@ -136,16 +137,37 @@ constructGET = function(base.url, parameters) {
     paste0(base.url, "?", url.args)
 }
 
-checkRequest = function(request) {
+parseRequest = function(request, subset="results") {
+    content = checkSuccessfulreturnContent(request) %>%
+        rawToChar %>%
+        jsonlite::fromJSON(simplifyDataFrame=TRUE, flatten=TRUE)
+
+    #parse and return results/metadata separately
+    if (subset=="results")
+        return(parseResults(content$search_results))
+    else if (subset=="metadata")
+        return(parseMetadata(content$metadata))
+    else
+        return(list(results=parseResults(content$search_results),
+                    metadata=parseMetadata(content$metadata)))
+}
+
+checkSuccessfulreturnContent = function(request) {
+    # note: this is where we could check header content if we weren't lazy...
+
     # if the request wasn't successful, stop
-    if (request$status_code != 200)
-        stop(paste0("Airbnb's API returned an error.\n\n",
-                    paste(names(content(request, as = "parsed")),
-                          content(request, as = "parsed"),
-                          sep = ": ", collapse = "\n")))
+    if (request$status_code != 200) {
+        error=jsonlite::fromJSON(rawToChar(request$content))
+        stop(paste0("API error at ", request$url, "\n\n",
+                    paste(names(error), error, sep = ": ", collapse = "\n")))
+    }
+    else
+        return(request$content)
 }
 
 parseMetadata = function(metadata) {
+    # this is where we take everything we want from metadata
+
     # geography info
     geography = list(city = metadata$geography$city,
                      state = metadata$geography$state,
@@ -158,35 +180,24 @@ parseMetadata = function(metadata) {
                                        geography$lat, "+", geography$lng)
     # facet info
     facets = list()
-    # "at least x" variables
-    for (i in c("bedrooms", "bathrooms", "beds")) {
-        facets[[i]] = lapply(metadata$facets[[i]], lapply, function(x) ifelse(is.null(x), 0, x)) %>%
-                      dplyr::bind_rows(.) %>%
-                      dplyr::mutate(value = as.numeric(as.character(value))) %>%
-                      dplyr::select(value, count) %>%
-                      dplyr::arrange(value) %>%
-                      dplyr::rename(cumulative.count = count) %>%
-                      dplyr::mutate(count = cumulative.count - dplyr::lead(cumulative.count, default = 0))
-    }
-    num.listings = facets$bedrooms$cumulative.count[1]
+    num.listings = metadata$listings_count
     # factor variables
     for (i in c("room_type", "hosting_amenity_ids", "top_amenities")) {
-        facets[[i]] = lapply(metadata$facets[[i]], lapply,
-                             function(x) ifelse(is.null(x), 0, x)) %>%
-            dplyr::bind_rows(.) %>%
-            dplyr::mutate(value = as.character(value)) %>%
+        facets[[i]] = metadata$facets[[i]] %>%
             dplyr::select(value, count) %>%
             dplyr::arrange(dplyr::desc(count))
     }
-    list(num.listings = num.listings,
-         geography = geography,
-         facets = facets)
+    list(num.listings=num.listings,
+         geography=geography,
+         facets=facets)
 }
 
 parseResults = function(results) {
-    results <- dplyr::bind_rows(lapply(results, function(x) dplyr::bind_rows(as.list(unlist(x)))))
+    # this is where we take everything we want from results
 
-    filterResults <- function(i) {
+    results =  as.tbl(results)
+
+    filterResults = function(i) {
       if(grepl(pattern="image",x=i) |
          grepl(pattern="url",x=i) |
          grepl(pattern="photo",x=i) |
@@ -197,30 +208,36 @@ parseResults = function(results) {
         results[i] <<- NULL
       }
     }
-    lapply(names(results),filterResults)
+    lapply(names(results), filterResults)
 
     #remove listing prefix
-    remPref <- function(name,pref){
-      gsub(paste("^",pref,sep=""),"",name)
+    remPref <- function(name, pref){
+      gsub(paste("^", pref, sep=""), "", name)
     }
-    names(results) <- lapply(names(results),remPref,pref="listing.")
+    names(results) = lapply(names(results), remPref, pref="listing.")
 
     # replace underscores with periods
-    names(results) <- lapply(names(results),gsub,pattern="_",replacement=".") %>%
-                        unlist()
+    names(results) = lapply(names(results), gsub, pattern="_",
+                            replacement=".") %>%
+        unlist()
 
     # change class of certain vars to numeric
-    numericList <- c("bathrooms","beds","bedrooms","lat","lng","picture.count",
-                     "person.capacity","reviews.count","star.rating","pricing.quote.guests",
-                     "pricing.quote.guest.details.number.of.adults","pricing.quote.localized.nightly.price",
-                     "pricing.quote.localized.service.fee","pricing.quote.localized.total.price",
-                     "pricing.quote.long.term.discount.amount.as.guest","pricing.quote.nightly.price",
-                     "pricing.quote.service.fee","pricing.quote.total.price")
+    numericList <- c("bathrooms", "beds","bedrooms", "lat", "lng",
+                     "picture.count", "person.capacity", "reviews.count",
+                     "star.rating", "pricing.quote.guests",
+                     "pricing.quote.guest.details.number.of.adults",
+                     "pricing.quote.localized.nightly.price",
+                     "pricing.quote.localized.service.fee",
+                     "pricing.quote.localized.total.price",
+                     "pricing.quote.long.term.discount.amount.as.guest",
+                     "pricing.quote.nightly.price",
+                     "pricing.quote.service.fee",
+                     "pricing.quote.total.price")
 
     # make sure the vars are in the dataset
     numericList <- numericList[numericList %in% names(results)]
 
-    results <- dplyr::mutate_at(.tbl=results,.cols=numericList, dplyr::funs("as.numeric"))
+    results <- dplyr::mutate_at(.tbl=results, .cols=numericList, dplyr::funs("as.numeric"))
 
-    results
+    return(results)
 }
