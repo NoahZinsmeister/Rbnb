@@ -7,6 +7,9 @@ output:
         toc: true
         toc_float:
             collapsed: false
+    github_document:
+        toc: true
+        html_preview: false
 ---
 
 ## Introduction
