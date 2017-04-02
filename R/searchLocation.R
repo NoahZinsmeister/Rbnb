@@ -1,7 +1,3 @@
-##
-## Begin code written by noahwz
-##
-
 #' Search for Airbnb listings by location.
 #'
 #' @description Lets Airbnb parse a given input location and return listings
@@ -187,14 +183,6 @@ parseMetadata = function(metadata) {
          facets = facets)
 }
 
-##
-## End code written by noahwz
-##
-
-##
-## Begin code written by Kroeger
-##
-
 parseResults = function(results) {
     results <- dplyr::bind_rows(lapply(results, function(x) dplyr::bind_rows(as.list(unlist(x)))))
 
@@ -236,7 +224,3 @@ parseResults = function(results) {
 
     results
 }
-
-##
-## End code Written by Kroeger
-##

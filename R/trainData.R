@@ -1,7 +1,3 @@
-##
-## File written by Kroeger
-##
-
 #' trainData
 #'
 #' Listing data from \code{\link{searchLocation}} with details merged in with

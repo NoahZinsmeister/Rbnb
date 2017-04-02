@@ -1,7 +1,3 @@
-##
-## File written by Kroeger
-##
-
 #' Predict a price for an Airbnb listing using the characteristics of nearby listings.
 #'
 #' @description Given a listing ID, \code{predictPrice} uses the \code{\link{xgboost}} package to predict a price
@@ -24,7 +20,7 @@
 #' @param eta For advanced users. The shrinkage parameter used to control the learning rate for
 #' \code{\link{xgboost}}.
 #' @param listing.detail a dataset for the particular listing if you've already pulled it using
-#' \code{\link{listingDetails}}. Note that this should be a dataset of only one listing (as in 
+#' \code{\link{listingDetails}}. Note that this should be a dataset of only one listing (as in
 #' \code{\link{listing.detail}}).
 #' @param trainData a dataset consisting of listings with details if you've already pulled it
 #' using \code{\link{searchLocation}} and \code{\link{addDetails}}.
@@ -34,7 +30,7 @@
 #' data("listing.detail", package="Rbnb")
 #' price.prediction <- Rbnb::predictPrice("12170773",
 #'        listing.detail = listing.detail, trainData = trainData[1:100])
-#' 
+#'
 #' @export
 #'
 #' @importFrom xgboost xgb.DMatrix xgb.cv xgb.train

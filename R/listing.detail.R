@@ -1,7 +1,3 @@
-##
-## File written by Kroeger
-##
-
 #' listing.detail
 #'
 #' Detailed listing data from \code{\link{listingDetails}("12170773")}

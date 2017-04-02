@@ -1,18 +1,18 @@
 ---
-title: "Summary"
+title: "Rbnb"
 author: "Alexander Kroeger, Noah Zinsmeister"
 date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
-vignette: >
-  %\VignetteIndexEntry{summary}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
+output:
+    html_notebook:
+        toc: true
+        toc_float:
+            collapsed: false
 ---
 
 ## Introduction
 Rbnb is an experimental front end for the (unofficial) Airbnb API. In addition
 to pulling detailed data on Airbnb listings based on arbitrary user-defined
-locations, Rbnb also provides a variety of visual summaries of these listing.
+locations, Rbnb also provides a variety of visual summaries of these listings.
 
 Use cases include, but are not limited to:
 
@@ -32,7 +32,7 @@ much of the Airbnb API.
 Before we get started, let's install Rbnb
 ```{r eval=FALSE}
 library(devtools)
-devtools::install_github("NoahZinsmeister/Rbnb", build_vignettes=TRUE)
+devtools::install_github("NoahZinsmeister/Rbnb")
 ```
 
 ## Searching by Location
@@ -98,13 +98,13 @@ kable(content$metadata$facets$bedrooms[1:5,])
 ```
 
 We can use `describeMetadata` for a better look at some of these facets. For
-example, we can look at the distribution of bathrooms.
+example, we can look at the distribution of bathrooms:
 
 ```{r fig.width=7, fig.height=5}
 Rbnb::describeMetadata(content, facet = "bathrooms")
 ```
 
-Or the 
+Or the room types:
 ```{r fig.width=7, fig.height=5}
 Rbnb::describeMetadata(content, facet = "room.type")
 ```

@@ -1,7 +1,3 @@
-##
-## File written by Kroeger
-##
-
 #' Pull detailed listing data.
 #'
 #'
