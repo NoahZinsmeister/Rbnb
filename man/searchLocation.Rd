@@ -28,5 +28,4 @@ in that location.
 \examples{
 searchLocation("IRS Regional Examination Center, Peoria, IL")
 
-
 }
