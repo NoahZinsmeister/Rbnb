@@ -15,12 +15,12 @@
 #' @importFrom curl curl_fetch_memory new_pool curl_fetch_multi multi_run
 #' @importFrom jsonlite fromJSON
 #' @importFrom magrittr %>%
-#' @importFrom dplyr bind_rows mutate select arrange rename lead mutate_at funs
+#' @importFrom dplyr bind_rows mutate select arrange rename lead mutate_at funs as.tbl
 #'
 #' @examples
 #' searchLocation("IRS Regional Examination Center, Peoria, IL")
 #'
-#'
+
 searchLocation = function(location,
                           verbose = TRUE,
                           metadata.only = FALSE,
@@ -129,9 +129,9 @@ searchLocation = function(location,
 }
 
 constructGET = function(base.url, parameters) {
-    # first, replace all spaces with %20
+    # replace all spaces with %20
     parameters = lapply(parameters, function(x) gsub(" ", "%20", x))
-    # append param names and values into a string like: name=value&...
+    # append param names and values into a string like: name=value&name=...
     url.args = paste(names(parameters), parameters, sep = "=", collapse = "&")
     # return the appropriate url call
     paste0(base.url, "?", url.args)
@@ -140,16 +140,16 @@ constructGET = function(base.url, parameters) {
 parseRequest = function(request, subset="results") {
     content = checkSuccessfulreturnContent(request) %>%
         rawToChar %>%
-        jsonlite::fromJSON(simplifyDataFrame=TRUE, flatten=TRUE)
+        jsonlite::fromJSON(simplifyVector=TRUE, flatten=TRUE)
 
     #parse and return results/metadata separately
-    if (subset=="results")
-        return(parseResults(content$search_results))
-    else if (subset=="metadata")
-        return(parseMetadata(content$metadata))
+    if (subset == "results")
+        parseResults(content$search_results)
+    else if (subset == "metadata")
+        parseMetadata(content$metadata)
     else
-        return(list(results=parseResults(content$search_results),
-                    metadata=parseMetadata(content$metadata)))
+        list(results=parseResults(content$search_results),
+             metadata=parseMetadata(content$metadata))
 }
 
 checkSuccessfulreturnContent = function(request) {
@@ -195,7 +195,7 @@ parseMetadata = function(metadata) {
 parseResults = function(results) {
     # this is where we take everything we want from results
 
-    results =  as.tbl(results)
+    results = as.tbl(results)
 
     filterResults = function(i) {
       if(grepl(pattern="image",x=i) |
@@ -237,7 +237,7 @@ parseResults = function(results) {
     # make sure the vars are in the dataset
     numericList <- numericList[numericList %in% names(results)]
 
-    results <- dplyr::mutate_at(.tbl=results, .cols=numericList, dplyr::funs("as.numeric"))
+    results <- dplyr::mutate_at(.tbl=results, .vars=numericList, dplyr::funs("as.numeric"))
 
     return(results)
 }
