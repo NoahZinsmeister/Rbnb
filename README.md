@@ -3,6 +3,8 @@ Rbnb
 Alexander Kroeger, Noah Zinsmeister
 2017-04-02
 
+UPDATE (11/1/2017): We are aware that, unfortunately, this package is currently broken. Currently, neither author has the bandwidth to push fixes. This may change, but don't count on it. We hope that would-be users of Rbnb will be able to take inspiration from our code or, better yet, submit a pull request!
+
 -   [Introduction](#introduction)
 -   [Installation](#installation)
 -   [Searching by Location](#searching-by-location)
